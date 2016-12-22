@@ -8,6 +8,6 @@ class AIControlled extends Controlled {
 	public var target:Float;
 	
 	public function new() {
-		super(0);
+		super(0.55);
 	}
 }
