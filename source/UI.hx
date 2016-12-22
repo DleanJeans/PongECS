@@ -53,10 +53,11 @@ class UI extends FlxGroup {
 		gameplay.add(playAgainButton);
 		gameplay.add(menuButton);
 		
-		var bgColor = FlxColor.BLACK;
-		bgColor.alphaFloat = .25;
-		titleMenu.bgColor = bgColor;
+		var background = new FlxSprite();
+		background.makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		background.alpha = 0.25;
 		
+		titleMenu.add(background);
 		titleMenu.add(title);
 		titleMenu.add(instruction);
 		titleMenu.add(buttons);
