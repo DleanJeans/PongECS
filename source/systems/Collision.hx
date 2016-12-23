@@ -78,6 +78,10 @@ class Collision implements ISystem {
 		var mapped = FlxMath.remapToRange(ball.getCenterX(), paddle.x, paddle.getRight(), -1, 1);
 		var angle = FlxAngle.angleFromFacing(paddle.facing, true);
 		mapped = FlxMath.bound(mapped, -1, 1);
+		
+		// Subtract mapped angle if paddle faces down
+		if (paddle.facing == FlxObject.DOWN)
+			mapped *= -1;
 		angle += Settings.maxDeflectedAngle * mapped;
 		
 		// Calculate velocity vector and copy it.
