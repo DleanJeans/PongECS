@@ -22,7 +22,8 @@ class ScoreboardView extends FlxSpriteGroup {
 		add(lowerScore);
 		
 		setPosition(space.x, space.y);
-		lowerScore.setBottom(space.getBottom());
+		upperScore.setBottom(Position.screenCenter.y);
+		lowerScore.y = Position.screenCenter.y;
 	}
 	
 }
