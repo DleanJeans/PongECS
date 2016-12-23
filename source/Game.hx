@@ -117,7 +117,7 @@ class Game extends FlxGroup {
 	}
 	
 	public function start() {
-		ballSpawner.spawnAtDirection(Direction.UP);
+		ballSpawner.spawnAtDirection(FlxG.random.sign()); // Up or Down
 	}
 	
 	public function restartSwitchControl() {
