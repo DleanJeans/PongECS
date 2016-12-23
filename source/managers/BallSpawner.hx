@@ -1,12 +1,9 @@
 package managers;
 
-import components.Goal;
 import edge.Entity;
 import edge.ISystem;
-import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
 import flixel.math.FlxVelocity;
 import flixel.util.FlxTimer;
@@ -51,7 +48,7 @@ class BallSpawner implements ISystem {
 		}
 		
 		var angle = 90.0 * Std.int(direction);
-		angle += FlxG.random.float(-1, 1) * 45;
+		angle += FlxG.random.float(-1, 1) * 30;
 		
 		return manager.createBall(FlxVelocity.velocityFromAngle(angle, Settings.ballSpeed));
 	}
