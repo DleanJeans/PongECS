@@ -2,19 +2,18 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxState;
-import testing.ShortcutWrapper;
 
 class PlayState extends FlxState {
 	public static var game(default, null):Game;
 	public static var ui(default, null):UI;
-	public static var shortcut(default, null):ShortcutWrapper;
+	public static var tester(default, null):Tester;
 	
 	override public function create() {
 		Settings.init();
 		
 		game = new Game();
 		ui = new UI();
-		shortcut = new ShortcutWrapper();
+		tester = new Tester();
 		
 		G.provide(this, game, ui);
 		
@@ -23,7 +22,7 @@ class PlayState extends FlxState {
 		
 		add(game);
 		add(ui);
-		add(shortcut);
+		add(tester);
 		
 		game.create();
 		game.start();
@@ -35,7 +34,7 @@ class PlayState extends FlxState {
 	}
 	
 	function setupShortcuts() {
-		shortcut.addShortcut(game.paddleManager.switchControlMode, "Switched Control Mode");
+		tester.shortcut.addShortcut(game.paddleManager.switchControlMode, "Switched Control Mode");
 	}
 	
 	function hideSomeDebugBoxes() {

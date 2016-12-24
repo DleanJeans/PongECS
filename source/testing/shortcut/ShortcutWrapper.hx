@@ -1,9 +1,7 @@
-package testing;
+package testing.shortcut;
 
-import flixel.FlxG;
 import flixel.group.FlxGroup;
 import flixel.util.FlxColor;
-import testing.ShortcutNotifier;
 
 class ShortcutWrapper extends FlxGroup {
 	private var _manager:ShortcutManager;

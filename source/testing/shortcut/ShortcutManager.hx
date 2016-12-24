@@ -1,10 +1,9 @@
-package testing;
+package testing.shortcut;
 
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKeyList;
 import flixel.util.FlxColor;
-import testing.ShortcutNotifier;
 
 typedef Shortcut = {
 	shortcutFunction:Void->Void,

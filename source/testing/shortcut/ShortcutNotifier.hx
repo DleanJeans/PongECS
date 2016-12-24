@@ -1,4 +1,4 @@
-package testing;
+package testing.shortcut;
 
 import flixel.FlxG;
 import flixel.text.FlxText;
