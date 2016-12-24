@@ -24,8 +24,8 @@ class WallManager {
 		
 		top = createWall(FlxRect.weak(pf.x, pf.y, pf.width, width));
 		bottom = createWall(FlxRect.weak(pf.x, pf.bottom - width, pf.width, width));
-		left = createWall(FlxRect.weak(pf.left - width, pf.y, width, FlxG.height));
-		right = createWall(FlxRect.weak(pf.right, pf.y, width, FlxG.height));
+		left = createWall(FlxRect.weak(pf.left - width, pf.y, width, pf.height));
+		right = createWall(FlxRect.weak(pf.right, pf.y, width, pf.height));
 		
 		top.add(G.game.teamUpper.get(Goal));
 		bottom.add(G.game.teamLower.get(Goal));
