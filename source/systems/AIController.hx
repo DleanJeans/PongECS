@@ -11,7 +11,7 @@ class AIController implements ISystem {
 		var paddle = sprite.getCenterX();
 		ai.target = ai.ballCenterX;
 		if (!ai.ballComing)
-			ai.target = Position.screenCenter.x;
+			ai.target = Settings.playField.getCenterX();
 		ai.target = snap(paddle, ai.target);
 		
 		ai.movingDirection = FlxMath.numericComparison(ai.target, paddle);
