@@ -1,5 +1,6 @@
 package ui;
 
+import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
@@ -10,8 +11,8 @@ class Button extends FlxButton {
 		
 		label.color = FlxColor.WHITE;
 		label.size = 25;
-		label.fieldWidth = fieldWidth != null ? fieldWidth : Settings.playField.width * 0.75;
-		label.alignment = FlxTextAlign.LEFT;
+		label.fieldWidth = fieldWidth != null ? fieldWidth : FlxG.width * 0.5;
+		label.alignment = FlxTextAlign.CENTER;
 		
 		makeGraphic(cast label.width, cast label.height, 0x0);
 	}

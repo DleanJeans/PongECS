@@ -42,7 +42,7 @@ class UI extends FlxGroup {
 		instruction = new Instruction();
 		menuButton = new MenuButton();
 		
-		buttons = new ButtonMenu(title.name.x + 100, title.sub.getBottom() + 50);
+		buttons = new ButtonMenu(FlxG.width * 0.25, title.sub.getBottom() + 50);
 		buttons.addButton("Start", onClick_start);
 		
 		add(gameplay);

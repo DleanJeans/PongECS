@@ -10,7 +10,6 @@ class MenuButton extends Button {
 	
 	public function new() {
 		super(0, 5, MENU, onClick, Settings.leftSpace.width);
-		label.alignment = FlxTextAlign.CENTER;
 		label.wordWrap = true;
 		UI.hide(this);
 		
