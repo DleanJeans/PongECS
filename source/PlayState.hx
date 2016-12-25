@@ -43,6 +43,7 @@ class PlayState extends FlxState {
 		game.paddles.ignoreDrawDebug = true;
 		ui.scoreboard.view.ignoreDrawDebug = true;
 		ui.menuButton.label.ignoreDrawDebug = true;
+		ui.title.ignoreDrawDebug = true;
 		#end
 	}
 	

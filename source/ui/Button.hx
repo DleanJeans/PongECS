@@ -14,7 +14,7 @@ class Button extends FlxButton {
 		label.fieldWidth = fieldWidth != null ? fieldWidth : FlxG.width * 0.5;
 		label.alignment = FlxTextAlign.CENTER;
 		
-		makeGraphic(cast label.width, cast label.height, 0x0);
+		makeGraphic(cast label.width, cast label.height, Color.semiTransparentGray);
 	}
 	
 }

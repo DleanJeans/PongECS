@@ -2,6 +2,8 @@ package;
 
 import flixel.FlxG;
 import flixel.math.FlxRect;
+import flixel.system.scaleModes.FixedScaleAdjustSizeScaleMode;
+import flixel.system.scaleModes.FixedScaleMode;
 
 class Settings {
 	public static var paddleSpeed:Float;
@@ -15,17 +17,23 @@ class Settings {
 	
 	// the area where the game happens
 	public static var playField(default, null):FlxRect;
+	public static var landscape(get, never):Bool; static function get_landscape() return FlxG.width >= FlxG.height;
 	
+	// the spaces on 2 sides of the playfield
 	public static var leftSpace(default, null):FlxRect;
 	public static var rightSpace(default, null):FlxRect;
 	
 	public static function init() {
-		var scale = 1.0;
+		if (FlxG.onMobile)
+			FlxG.mouse.visible = false;
 		
 		playField = FlxRect.get(0, 0, 450, 600);
 		
+		var scale = 1.0;
+		unitLength = 16;
+		
 		// scale to fit playField to screen
-		if (FlxG.height <= FlxG.width)
+		if (Settings.landscape)
 			scale =  FlxG.height / playField.height;
 		else scale = FlxG.width / playField.width;
 		
@@ -37,7 +45,6 @@ class Settings {
 		paddleSpeed = playField.width;
 		ballSpeed = playField.height * 0.75;
 		
-		// the spaces on 2 sides of the playfield
 		leftSpace = FlxRect.get(0, 0, playField.x - Settings.unit(), FlxG.height);
 		rightSpace = FlxRect.get(playField.right, 0, FlxG.width - playField.right + Settings.unit(), FlxG.height);
 	}

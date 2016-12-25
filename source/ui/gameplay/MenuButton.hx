@@ -1,24 +1,34 @@
 package ui.gameplay;
 
+import flixel.FlxG;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
+import flixel.util.FlxColor;
 import ui.Button;
 
 class MenuButton extends Button {
 	public static var MENU = "MENU";
-	public static var CLICK_AGAIN = "CLICK AGAIN";
+	public static var CLICK_AGAIN = if (FlxG.onMobile) "TAP AGAIN" else "CLICK AGAIN";
 	
 	public function new() {
-		super(0, 5, MENU, onClick, Settings.leftSpace.width);
-		label.wordWrap = true;
+		super(5, 0, MENU, onClick, Settings.leftSpace.width - 10);
+		setupLabel();
 		UI.hide(this);
 		
-		FlxMouseEventManager.add(this, null, null, null, resetOnMouseLeaving, false, true, 
-		false); // `pixelPerfect = false` allows button with transparent graphic to be click
+		FlxMouseEventManager.add(this, null, null, null, resetOnMouseLeaving, false, true,
+		false); // `pixelPerfect = false` make button with transparent graphic clickable
+	}
+	
+	public function setupLabel() {
+		var landscape = Settings.landscape;
+		label.wordWrap = landscape;
+		label.autoSize = !landscape;
+		label.alignment = landscape ? FlxTextAlign.CENTER : FlxTextAlign.LEFT;
 	}
 	
 	function resetOnMouseLeaving(_) {
 		text = MENU;
+		updateTextBox();
 	}
 	
 	function onClick() {
@@ -29,7 +39,12 @@ class MenuButton extends Button {
 			text = MENU;
 			backToMenu();
 		}
-		height = label.height;
+		updateTextBox();
+	}
+	
+	function updateTextBox() {
+		setGraphicSize(cast label.width, cast label.height);
+		updateHitbox();
 	}
 	
 	function backToMenu() {
@@ -40,4 +55,5 @@ class MenuButton extends Button {
 		G.game.restartSwitchControl();
 		G.game.inMenu = true;
 	}
+	
 }

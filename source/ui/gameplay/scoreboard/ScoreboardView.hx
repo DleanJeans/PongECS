@@ -1,5 +1,6 @@
 package ui.gameplay.scoreboard;
 
+import flixel.FlxG;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 
@@ -10,20 +11,24 @@ class ScoreboardView extends FlxSpriteGroup {
 	public function new() {
 		super();
 		
-		var space = Settings.rightSpace;
+		var size = if (Settings.landscape) 50 else 30;
+		var fieldWidth = Settings.rightSpace.width - Settings.unit(2);
 		
-		upperScore = new FlxText(0, 0, space.width, "0", 50);
-		lowerScore = new FlxText(0, 0, space.width, "0", 50);
+		upperScore = new FlxText(0, 0, fieldWidth, "10", size);
+		lowerScore = new FlxText(0, 0, fieldWidth, "10", size);
 		
-		upperScore.alignment =
-		lowerScore.alignment = FlxTextAlign.CENTER;
+		upperScore.alignment = lowerScore.alignment = FlxTextAlign.CENTER;
 		
 		add(upperScore);
 		add(lowerScore);
 		
-		setPosition(space.x, space.y);
-		upperScore.setBottom(Position.screenCenter.y);
-		lowerScore.y = Position.screenCenter.y;
+		if (!Settings.landscape)
+			upperScore.fieldWidth = lowerScore.fieldWidth = upperScore.width;
+		
+		upperScore.setBottomRight(Position.screenMidRight);
+		lowerScore.setTopRight(Position.screenMidRight);
+		
+		upperScore.text = lowerScore.text = "0";
 	}
 	
 }
