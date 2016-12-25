@@ -54,7 +54,7 @@ ApplicationMain.init = function() {
 	}
 };
 ApplicationMain.main = function() {
-	ApplicationMain.config = { build : "396", company : "Dlean Jeans", file : "PongECS", fps : 60, name : "Pong ECS", orientation : "", packageName : "com.example.myapp", version : "0.0.1", windows : [{ antialiasing : 0, background : 0, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 0, parameters : "{}", resizable : false, stencilBuffer : true, title : "Pong ECS", vsync : true, width : 0, x : null, y : null}]};
+	ApplicationMain.config = { build : "613", company : "Dlean Jeans", file : "PongECS", fps : 60, name : "Pong ECS", orientation : "", packageName : "com.example.myapp", version : "0.2.0", windows : [{ antialiasing : 0, background : 0, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 0, parameters : "{}", resizable : false, stencilBuffer : true, title : "Pong ECS", vsync : false, width : 0, x : null, y : null}]};
 };
 ApplicationMain.start = function() {
 	var hasMain = false;
@@ -2086,7 +2086,13 @@ openfl_display_Sprite.prototype = $extend(openfl_display_DisplayObjectContainer.
 });
 var Main = function() {
 	openfl_display_Sprite.call(this);
-	this.addChild(new flixel_FlxGame(openfl_Lib.current.stage.stageWidth,openfl_Lib.current.stage.stageHeight,PlayState,1,60,60,true));
+	var width = 800;
+	var height = 600;
+	if(flixel_FlxG.html5.onMobile) {
+		width = openfl_Lib.current.stage.stageWidth;
+		height = openfl_Lib.current.stage.stageHeight;
+	}
+	this.addChild(new flixel_FlxGame(width,height,PlayState,1,60,60,true));
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
@@ -3598,6 +3604,38 @@ Game.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 	,physics: null
 	,inMenu: null
 	,_spriteManager: null
+	,create: function() {
+		this.paddleManager.createPaddles();
+		this.wallManager.createWalls();
+	}
+	,startMenuDemoMode: function() {
+		this.paddleManager.switchBothToAI();
+		this.restart();
+		this.signals.menuDemoMode.dispatch();
+	}
+	,startOnePlayerMode: function() {
+		this.paddleManager.switchP1ToPlayer();
+		this.restart();
+		this.signals.onePlayerMode.dispatch();
+	}
+	,startTwoPlayerMode: function() {
+		this.paddleManager.switchBothToPlayers();
+		this.restart();
+		this.signals.twoPlayerMode.dispatch();
+	}
+	,restart: function() {
+		this.reset();
+		this.start();
+	}
+	,reset: function() {
+		this.teamManager.resetScore();
+		this.paddleManager.centerPaddles();
+		this.ballManager.reset();
+	}
+	,start: function() {
+		this.ballSpawner.spawnAtDirection(flixel_FlxG.random["float"](0,100) < 50?1:-1);
+		this.resume();
+	}
 	,setup: function() {
 		this.setupEngine();
 		this.setupSpriteGroups();
@@ -3631,7 +3669,11 @@ Game.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 	,setupPhases: function() {
 		this.postUpdate = this.engine.createPhase();
 		this.physics = this.engine.createPhase();
-		this.postUpdate.add(new systems_KeyboardController());
+		if(flixel_FlxG.html5.onMobile) {
+			this.postUpdate.add(new systems_TouchController());
+		} else {
+			this.postUpdate.add(new systems_KeyboardController());
+		}
 		this.postUpdate.add(new systems_AIBallTracker());
 		this.postUpdate.add(new systems_AIController());
 		this.postUpdate.add(new systems_PaddleMovement());
@@ -3653,24 +3695,6 @@ Game.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 		flixel_group_FlxTypedGroup.prototype.update.call(this,elapsed);
 		this.postUpdate.update(elapsed);
 		this.physics.update(elapsed);
-	}
-	,create: function() {
-		this.paddleManager.createPaddles();
-		this.wallManager.createWalls();
-	}
-	,start: function() {
-		this.ballSpawner.spawnAtDirection(-1);
-	}
-	,restartSwitchControl: function() {
-		this.paddleManager.switchControlMode();
-		this.restart();
-	}
-	,restart: function() {
-		this.teamManager.resetScore();
-		this.paddleManager.centerPaddles();
-		this.ballManager.reset();
-		this.start();
-		this.resume();
 	}
 	,createSprite: function(x,y,group) {
 		if(y == null) {
@@ -4017,20 +4041,20 @@ $hxClasses["PlayState"] = PlayState;
 PlayState.__name__ = ["PlayState"];
 PlayState.game = null;
 PlayState.ui = null;
-PlayState.shortcut = null;
+PlayState.tester = null;
 PlayState.__super__ = flixel_FlxState;
 PlayState.prototype = $extend(flixel_FlxState.prototype,{
 	create: function() {
 		Settings.init();
 		PlayState.game = new Game();
 		PlayState.ui = new UI();
-		PlayState.shortcut = new testing_ShortcutWrapper();
+		PlayState.tester = new Tester();
 		G.provide(this,PlayState.game,PlayState.ui);
 		PlayState.game.setup();
 		PlayState.ui.setup();
 		this.add(PlayState.game);
 		this.add(PlayState.ui);
-		this.add(PlayState.shortcut);
+		this.add(PlayState.tester);
 		PlayState.game.create();
 		PlayState.game.start();
 		this.setupShortcuts();
@@ -4384,6 +4408,7 @@ Reflect.makeVarArgs = function(f) {
 var Settings = function() { };
 $hxClasses["Settings"] = Settings;
 Settings.__name__ = ["Settings"];
+Settings.__properties__ = {get_portrait:"get_portrait",get_landscape:"get_landscape"}
 Settings.paddleSpeed = null;
 Settings.ballSpeed = null;
 Settings.unit = function(times) {
@@ -4393,10 +4418,18 @@ Settings.unit = function(times) {
 	return Settings.unitLength * times | 0;
 };
 Settings.playField = null;
+Settings.get_landscape = function() {
+	return flixel_FlxG.width >= flixel_FlxG.height;
+};
+Settings.get_portrait = function() {
+	return !Settings.get_landscape();
+};
 Settings.leftSpace = null;
 Settings.rightSpace = null;
 Settings.init = function() {
-	var scale = 1.0;
+	if(flixel_FlxG.html5.onMobile) {
+		flixel_FlxG.mouse.set_visible(false);
+	}
 	var _this = flixel_math_FlxRect._pool.get();
 	_this.x = 0;
 	_this.y = 0;
@@ -4404,7 +4437,9 @@ Settings.init = function() {
 	_this.height = 600;
 	_this._inPool = false;
 	Settings.playField = _this;
-	if(flixel_FlxG.height <= flixel_FlxG.width) {
+	var scale = 1.0;
+	Settings.unitLength = 16;
+	if(Settings.get_landscape()) {
 		scale = flixel_FlxG.height / Settings.playField.height;
 	} else {
 		scale = flixel_FlxG.width / Settings.playField.width;
@@ -4553,6 +4588,21 @@ StringTools.hex = function(n,digits) {
 	}
 	return s;
 };
+var Tester = function() {
+	flixel_group_FlxTypedGroup.call(this);
+	this.shortcut = new testing_shortcut_ShortcutWrapper();
+	this.orientationSwitcher = new testing_OrientationSwitcher();
+	this.add(this.shortcut);
+	this.add(this.orientationSwitcher);
+};
+$hxClasses["Tester"] = Tester;
+Tester.__name__ = ["Tester"];
+Tester.__super__ = flixel_group_FlxTypedGroup;
+Tester.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
+	shortcut: null
+	,orientationSwitcher: null
+	,__class__: Tester
+});
 var ValueType = $hxClasses["ValueType"] = { __ename__ : ["ValueType"], __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] };
 ValueType.TNull = ["TNull",0];
 ValueType.TNull.toString = $estr;
@@ -4782,8 +4832,14 @@ UI.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 		this.instruction = new ui_title_Instruction();
 		this.menuButton = new ui_gameplay_MenuButton();
 		var object = this.title.sub;
-		this.buttons = new ui_ButtonMenu(this.title.name.x + 100,object.y + object.height + 50);
-		this.buttons.addButton("Start",$bind(this,this.onClick_start));
+		this.buttons = new ui_ButtonMenu(flixel_FlxG.width * 0.25,object.y + object.height + 50);
+		if(flixel_FlxG.html5.onMobile) {
+			this.buttons.addButton("ONE PLAYER",$bind(this,this.onClick_onePlayer));
+			this.buttons.addButton("TWO PLAYER",$bind(this,this.onClick_twoPlayer));
+		} else {
+			this.buttons.addButton("START",$bind(this,this.onClick_onePlayer));
+		}
+		this.buttons.screenCenter();
 		this.add(this.gameplay);
 		this.add(this.titleMenu);
 		this.gameplay.add(this.scoreboard);
@@ -4798,11 +4854,17 @@ UI.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 		this.titleMenu.add(this.instruction);
 		this.titleMenu.add(this.buttons);
 	}
-	,onClick_start: function() {
+	,onClick_onePlayer: function() {
+		this.onClick_start(($_=G.game,$bind($_,$_.startOnePlayerMode)));
+	}
+	,onClick_twoPlayer: function() {
+		this.onClick_start(($_=G.game,$bind($_,$_.startTwoPlayerMode)));
+	}
+	,onClick_start: function(startMode) {
 		UI.hide(this.titleMenu);
 		UI.show(this.menuButton);
-		G.game.restartSwitchControl();
 		G.game.inMenu = false;
+		startMode();
 	}
 	,__class__: UI
 });
@@ -5006,23 +5068,31 @@ Xml.prototype = {
 var edge_IComponent = function() { };
 $hxClasses["edge.IComponent"] = edge_IComponent;
 edge_IComponent.__name__ = ["edge","IComponent"];
-var components_Controlled = function(movingDirection) {
+var components_Controlled = function(speedPercent) {
+	if(speedPercent == null) {
+		speedPercent = 1;
+	}
+	this.speed = Settings.paddleSpeed;
 	this.movingDirection = 0;
-	this.movingDirection = movingDirection;
+	this.speed = speedPercent * Settings.paddleSpeed;
 };
 $hxClasses["components.Controlled"] = components_Controlled;
 components_Controlled.__name__ = ["components","Controlled"];
 components_Controlled.__interfaces__ = [edge_IComponent];
 components_Controlled.prototype = {
 	movingDirection: null
+	,speed: null
+	,getVelocity: function() {
+		return this.speed * this.movingDirection;
+	}
 	,toString: function() {
-		return "Controlled(movingDirection=$movingDirection)";
+		return "Controlled(movingDirection=$movingDirection,speed=$speed)";
 	}
 	,__class__: components_Controlled
 };
 var components_AIControlled = function() {
 	this.ballComing = false;
-	components_Controlled.call(this,0);
+	components_Controlled.call(this,0.55);
 };
 $hxClasses["components.AIControlled"] = components_AIControlled;
 components_AIControlled.__name__ = ["components","AIControlled"];
@@ -5032,7 +5102,7 @@ components_AIControlled.prototype = $extend(components_Controlled.prototype,{
 	,ballComing: null
 	,target: null
 	,toString: function() {
-		return "AIControlled(movingDirection=$movingDirection,ballCenterX=$ballCenterX,ballComing=$ballComing,target=$target)";
+		return "AIControlled(movingDirection=$movingDirection,speed=$speed,ballCenterX=$ballCenterX,ballComing=$ballComing,target=$target)";
 	}
 	,__class__: components_AIControlled
 });
@@ -5063,14 +5133,14 @@ components_Goal.prototype = {
 	,__class__: components_Goal
 };
 var components_PlayerControlled = function() {
-	components_Controlled.call(this,0);
+	components_Controlled.call(this);
 };
 $hxClasses["components.PlayerControlled"] = components_PlayerControlled;
 components_PlayerControlled.__name__ = ["components","PlayerControlled"];
 components_PlayerControlled.__super__ = components_Controlled;
 components_PlayerControlled.prototype = $extend(components_Controlled.prototype,{
 	toString: function() {
-		return "PlayerControlled(movingDirection=$movingDirection)";
+		return "PlayerControlled(movingDirection=$movingDirection,speed=$speed)";
 	}
 	,__class__: components_PlayerControlled
 });
@@ -5222,26 +5292,40 @@ edge_Entity.prototype = {
 	}
 	,get: function(type) {
 		var this1 = this.map;
+		var key = this.keyType(type);
+		var _this = this1;
+		return __map_reserved[key] != null?_this.getReserved(key):_this.h[key];
+	}
+	,getExact: function(type) {
+		var this1 = this.map;
 		var key = Type.getClassName(type);
 		var _this = this1;
 		return __map_reserved[key] != null?_this.getReserved(key):_this.h[key];
 	}
 	,exists: function(component) {
-		var type = component == null?null:js_Boot.getClass(component);
-		if(this.existsType(type)) {
-			return this.map.get(Type.getClassName(type)) == component;
+		var s = this.superClass(component == null?null:js_Boot.getClass(component));
+		if(this.existsType(s)) {
+			return this.map.get(this.keyType(s)) == component;
 		} else {
 			return false;
 		}
 	}
 	,existsType: function(type) {
 		var this1 = this.map;
-		var key = Type.getClassName(type);
+		var key = this.keyType(type);
 		var _this = this1;
 		if(__map_reserved[key] != null) {
 			return _this.existsReserved(key);
 		} else {
 			return _this.h.hasOwnProperty(key);
+		}
+	}
+	,existsExactType: function(type) {
+		if(this.existsType(type)) {
+			var o = this.map.get(this.keyType(type));
+			return (o == null?null:js_Boot.getClass(o)) == type;
+		} else {
+			return false;
 		}
 	}
 	,remove: function(component) {
@@ -5294,7 +5378,18 @@ edge_Entity.prototype = {
 		this.map.remove(type);
 	}
 	,key: function(component) {
-		return Type.getClassName(component == null?null:js_Boot.getClass(component));
+		return this.keyType(component == null?null:js_Boot.getClass(component));
+	}
+	,keyType: function(type) {
+		return Type.getClassName(this.superClass(type));
+	}
+	,superClass: function(t) {
+		var s = Type.getSuperClass(t);
+		while(s != null && s != edge_IComponent) {
+			t = s;
+			s = Type.getSuperClass(t);
+		}
+		return t;
 	}
 	,__class__: edge_Entity
 };
@@ -29043,6 +29138,93 @@ flixel_system_replay_MouseRecord.prototype = {
 	,wheel: null
 	,__class__: flixel_system_replay_MouseRecord
 };
+var flixel_system_scaleModes_FixedScaleAdjustSizeScaleMode = function(fixedWidth,fixedHeight) {
+	if(fixedHeight == null) {
+		fixedHeight = false;
+	}
+	if(fixedWidth == null) {
+		fixedWidth = false;
+	}
+	this.fixedHeight = false;
+	this.fixedWidth = false;
+	flixel_system_scaleModes_BaseScaleMode.call(this);
+	this.fixedWidth = fixedWidth;
+	this.fixedHeight = fixedHeight;
+	this.gameSize.set(flixel_FlxG.width * flixel_FlxG.initialZoom,flixel_FlxG.height * flixel_FlxG.initialZoom);
+};
+$hxClasses["flixel.system.scaleModes.FixedScaleAdjustSizeScaleMode"] = flixel_system_scaleModes_FixedScaleAdjustSizeScaleMode;
+flixel_system_scaleModes_FixedScaleAdjustSizeScaleMode.__name__ = ["flixel","system","scaleModes","FixedScaleAdjustSizeScaleMode"];
+flixel_system_scaleModes_FixedScaleAdjustSizeScaleMode.__super__ = flixel_system_scaleModes_BaseScaleMode;
+flixel_system_scaleModes_FixedScaleAdjustSizeScaleMode.prototype = $extend(flixel_system_scaleModes_BaseScaleMode.prototype,{
+	fixedWidth: null
+	,fixedHeight: null
+	,onMeasure: function(Width,Height) {
+		flixel_FlxG.width = this.fixedWidth?flixel_FlxG.initialWidth:Math.ceil(Width / flixel_FlxG.initialZoom);
+		flixel_FlxG.height = this.fixedHeight?flixel_FlxG.initialHeight:Math.ceil(Height / flixel_FlxG.initialZoom);
+		this.updateGameSize(Width,Height);
+		this.updateDeviceSize(Width,Height);
+		this.updateScaleOffset();
+		this.updateGamePosition();
+	}
+	,updateGameSize: function(Width,Height) {
+		this.gameSize.set_x(flixel_FlxG.width * flixel_FlxG.initialZoom);
+		this.gameSize.set_y(flixel_FlxG.height * flixel_FlxG.initialZoom);
+		if(flixel_FlxG.camera != null) {
+			var oldWidth = flixel_FlxG.camera.width;
+			var oldHeight = flixel_FlxG.camera.height;
+			var _this = flixel_FlxG.camera;
+			var Height1 = flixel_FlxG.height;
+			_this.set_width(flixel_FlxG.width);
+			_this.set_height(Height1);
+			var _g = flixel_FlxG.camera.scroll;
+			_g.set_x(_g.x + 0.5 * (oldWidth - flixel_FlxG.width));
+			var _g1 = flixel_FlxG.camera.scroll;
+			_g1.set_y(_g1.y + 0.5 * (oldHeight - flixel_FlxG.height));
+		}
+	}
+	,__class__: flixel_system_scaleModes_FixedScaleAdjustSizeScaleMode
+});
+var flixel_system_scaleModes_FixedScaleMode = function() {
+	flixel_system_scaleModes_BaseScaleMode.call(this);
+};
+$hxClasses["flixel.system.scaleModes.FixedScaleMode"] = flixel_system_scaleModes_FixedScaleMode;
+flixel_system_scaleModes_FixedScaleMode.__name__ = ["flixel","system","scaleModes","FixedScaleMode"];
+flixel_system_scaleModes_FixedScaleMode.__super__ = flixel_system_scaleModes_BaseScaleMode;
+flixel_system_scaleModes_FixedScaleMode.prototype = $extend(flixel_system_scaleModes_BaseScaleMode.prototype,{
+	updateGameSize: function(Width,Height) {
+		this.gameSize.set_x(flixel_FlxG.width);
+		this.gameSize.set_y(flixel_FlxG.height);
+	}
+	,__class__: flixel_system_scaleModes_FixedScaleMode
+});
+var flixel_system_scaleModes_StageSizeScaleMode = function() {
+	flixel_system_scaleModes_BaseScaleMode.call(this);
+};
+$hxClasses["flixel.system.scaleModes.StageSizeScaleMode"] = flixel_system_scaleModes_StageSizeScaleMode;
+flixel_system_scaleModes_StageSizeScaleMode.__name__ = ["flixel","system","scaleModes","StageSizeScaleMode"];
+flixel_system_scaleModes_StageSizeScaleMode.__super__ = flixel_system_scaleModes_BaseScaleMode;
+flixel_system_scaleModes_StageSizeScaleMode.prototype = $extend(flixel_system_scaleModes_BaseScaleMode.prototype,{
+	onMeasure: function(Width,Height) {
+		flixel_FlxG.width = Width;
+		flixel_FlxG.height = Height;
+		this.scale.set(1,1);
+		flixel_FlxG.game.set_x(flixel_FlxG.game.set_y(0));
+		if(flixel_FlxG.camera != null) {
+			var oldW = flixel_FlxG.camera.width;
+			var oldH = flixel_FlxG.camera.height;
+			var newW = Math.ceil(Width / flixel_FlxG.camera.zoom);
+			var newH = Math.ceil(Height / flixel_FlxG.camera.zoom);
+			var _this = flixel_FlxG.camera;
+			_this.set_width(newW);
+			_this.set_height(newH);
+			var _g = flixel_FlxG.camera.flashSprite;
+			_g.set_x(_g.get_x() + (newW - oldW) / 2);
+			var _g1 = flixel_FlxG.camera.flashSprite;
+			_g1.set_y(_g1.get_y() + (newH - oldH) / 2);
+		}
+	}
+	,__class__: flixel_system_scaleModes_StageSizeScaleMode
+});
 var flixel_system_ui_FlxFocusLostScreen = function() {
 	openfl_display_Sprite.call(this);
 	this.draw();
@@ -54365,7 +54547,17 @@ managers_BallManager.prototype = {
 	,createBall: function(velocity) {
 		var sprite = G.game._spriteManager.createSprite(0,0,this.balls);
 		sprite.makeGraphic(Settings.unit(),Settings.unit());
-		sprite.screenCenter();
+		var object = Settings.playField;
+		var X = object.x + object.width / 2;
+		var Y = object.y + object.height / 2;
+		var point = flixel_math_FlxPoint._pool.get().set(X,Y);
+		point._inPool = false;
+		point._weak = true;
+		sprite.x = point.x - sprite.width / 2;
+		sprite.y = point.y - sprite.height / 2;
+		if(point._weak) {
+			point.put();
+		}
 		sprite.elasticity = 1;
 		if(velocity != null) {
 			var _this = sprite.velocity;
@@ -54420,7 +54612,7 @@ managers_BallSpawner.prototype = {
 			return Game.NULL_ENTITY;
 		}
 		var angle = 90.0 * (direction | 0);
-		angle += flixel_FlxG.random["float"](-1,1) * 45;
+		angle += flixel_FlxG.random["float"](-1,1) * 30;
 		var tmp1 = this.manager;
 		var Speed = Settings.ballSpeed;
 		var a = angle * (Math.PI / 180);
@@ -54459,6 +54651,9 @@ managers_BallSpawner_$SystemProcess.prototype = {
 	,__class__: managers_BallSpawner_$SystemProcess
 };
 var managers_GameSignals = function() {
+	this.twoPlayerMode = new flixel_util__$FlxSignal_FlxSignal0();
+	this.onePlayerMode = new flixel_util__$FlxSignal_FlxSignal0();
+	this.menuDemoMode = new flixel_util__$FlxSignal_FlxSignal0();
 	this.won_0 = new flixel_util__$FlxSignal_FlxSignal0();
 	this.won = new flixel_util__$FlxSignal_FlxSignal1();
 	this.goal_ball = new flixel_util__$FlxSignal_FlxSignal1();
@@ -54485,6 +54680,9 @@ managers_GameSignals.prototype = {
 	,goal_ball: null
 	,won: null
 	,won_0: null
+	,menuDemoMode: null
+	,onePlayerMode: null
+	,twoPlayerMode: null
 	,__class__: managers_GameSignals
 };
 var managers_GoalManager = function() {
@@ -54495,7 +54693,8 @@ managers_GoalManager.__name__ = ["managers","GoalManager"];
 managers_GoalManager.prototype = {
 	_signals: null
 	,addScore: function(goal) {
-		goal.opponent.map.get(Type.getClassName(components_Score)).add();
+		var _this = goal.opponent;
+		_this.map.get(_this.keyType(components_Score)).add();
 	}
 	,detectGoal: function(ball,wall) {
 		var wallEntity = G.game.getEntity(wall);
@@ -54503,7 +54702,7 @@ managers_GoalManager.prototype = {
 			return;
 		}
 		if(wallEntity.existsType(components_Goal)) {
-			var goal = wallEntity.map.get(Type.getClassName(components_Goal));
+			var goal = wallEntity.map.get(wallEntity.keyType(components_Goal));
 			this._signals.goal.dispatch(goal);
 			this._signals.goal_0.dispatch();
 			this._signals.goal_ball.dispatch(ball);
@@ -54520,18 +54719,36 @@ managers_PaddleManager.prototype = {
 	paddles: null
 	,p1: null
 	,p2: null
-	,switchControlMode: function() {
-		if(this.p1.existsType(components_AIControlled)) {
-			this.p1.removeType(components_AIControlled);
-			this.p1.add(new components_PlayerControlled());
+	,switchBothToPlayers: function() {
+		this.switchControl(this.p1,new components_PlayerControlled());
+		this.switchControl(this.p2,new components_PlayerControlled());
+	}
+	,switchBothToAI: function() {
+		this.switchControl(this.p1,new components_AIControlled());
+		this.switchControl(this.p2,new components_AIControlled());
+	}
+	,switchP1ToPlayer: function() {
+		this.switchControl(this.p1,new components_PlayerControlled());
+	}
+	,switchP1Control: function() {
+		if(this.p1.existsExactType(components_AIControlled)) {
+			this.switchP1ToPlayer();
 		} else {
-			this.p1.removeType(components_PlayerControlled);
-			this.p1.add(new components_AIControlled());
+			this.switchControl(this.p1,new components_AIControlled());
 		}
 	}
+	,switchControl: function(p,newControl) {
+		if(p.existsExactType(newControl == null?null:js_Boot.getClass(newControl))) {
+			return;
+		}
+		p.removeType(components_Controlled);
+		p.add(newControl);
+	}
 	,centerPaddles: function() {
-		this.p1.map.get(Type.getClassName(flixel_FlxSprite)).screenCenter(flixel_util_FlxAxes.X);
-		this.p2.map.get(Type.getClassName(flixel_FlxSprite)).screenCenter(flixel_util_FlxAxes.X);
+		var _this = this.p1;
+		_this.map.get(_this.keyType(flixel_FlxSprite)).screenCenter(flixel_util_FlxAxes.X);
+		var _this1 = this.p2;
+		_this1.map.get(_this1.keyType(flixel_FlxSprite)).screenCenter(flixel_util_FlxAxes.X);
 	}
 	,createPaddles: function() {
 		var _this = Settings.playField;
@@ -54620,8 +54837,10 @@ managers_TeamManager.prototype = {
 		return G.game.engine.create([new components_Direction(position),new components_Score()]);
 	}
 	,resetScore: function() {
-		this.teamUpper.map.get(Type.getClassName(components_Score)).reset();
-		this.teamLower.map.get(Type.getClassName(components_Score)).reset();
+		var _this = this.teamUpper;
+		_this.map.get(_this.keyType(components_Score)).reset();
+		var _this1 = this.teamLower;
+		_this1.map.get(_this1.keyType(components_Score)).reset();
 	}
 	,__class__: managers_TeamManager
 };
@@ -54663,7 +54882,7 @@ managers_WallManager.prototype = {
 		this.bottom = this.createWall(_this1);
 		var X2 = pf.x - width;
 		var Y2 = pf.y;
-		var Height = flixel_FlxG.height;
+		var Height = pf.height;
 		var _this2 = flixel_math_FlxRect._pool.get();
 		_this2.x = X2;
 		_this2.y = Y2;
@@ -54674,7 +54893,7 @@ managers_WallManager.prototype = {
 		this.left = this.createWall(_this2);
 		var X3 = pf.x + pf.width;
 		var Y3 = pf.y;
-		var Height1 = flixel_FlxG.height;
+		var Height1 = pf.height;
 		var _this3 = flixel_math_FlxRect._pool.get();
 		_this3.x = X3;
 		_this3.y = Y3;
@@ -54683,8 +54902,10 @@ managers_WallManager.prototype = {
 		_this3._inPool = false;
 		_this3._weak = true;
 		this.right = this.createWall(_this3);
-		this.top.add(G.game.get_teamUpper().map.get(Type.getClassName(components_Goal)));
-		this.bottom.add(G.game.get_teamLower().map.get(Type.getClassName(components_Goal)));
+		var _this4 = G.game.get_teamUpper();
+		this.top.add(_this4.map.get(_this4.keyType(components_Goal)));
+		var _this5 = G.game.get_teamLower();
+		this.bottom.add(_this5.map.get(_this5.keyType(components_Goal)));
 	}
 	,createWall: function(rect) {
 		var sprite = G.game._spriteManager.createSprite(rect.x,rect.y,this.walls);
@@ -54704,8 +54925,10 @@ managers_WallManager.prototype = {
 var managers_WinCheck = function() {
 	this._teamLower = G.game.get_teamLower();
 	this._teamUpper = G.game.get_teamUpper();
-	this._upper = this._teamUpper.map.get(Type.getClassName(components_Score));
-	this._lower = this._teamLower.map.get(Type.getClassName(components_Score));
+	var _this = this._teamUpper;
+	this._upper = _this.map.get(_this.keyType(components_Score));
+	var _this1 = this._teamLower;
+	this._lower = _this1.map.get(_this1.keyType(components_Score));
 };
 $hxClasses["managers.WinCheck"] = managers_WinCheck;
 managers_WinCheck.__name__ = ["managers","WinCheck"];
@@ -77441,12 +77664,8 @@ systems_AIController.prototype = {
 		var paddle = sprite.x + sprite.width / 2;
 		ai.target = ai.ballCenterX;
 		if(!ai.ballComing) {
-			var X = flixel_FlxG.width / 2;
-			var Y = flixel_FlxG.height / 2;
-			var point = flixel_math_FlxPoint._pool.get().set(X,Y);
-			point._inPool = false;
-			point._weak = true;
-			ai.target = point.x;
+			var object = Settings.playField;
+			ai.target = object.x + object.width / 2;
 		}
 		ai.target = this.snap(paddle,ai.target);
 		ai.movingDirection = flixel_math_FlxMath.numericComparison(ai.target,paddle);
@@ -77617,6 +77836,9 @@ systems_Collision.prototype = {
 			mapped = 1;
 		} else {
 			mapped = lowerBound;
+		}
+		if(paddle.facing == 4096) {
+			mapped *= -1;
 		}
 		angle += Settings.maxDeflectedAngle * mapped;
 		var Speed = Settings.ballSpeed;
@@ -77835,7 +78057,7 @@ systems_PaddleMovement.__name__ = ["systems","PaddleMovement"];
 systems_PaddleMovement.__interfaces__ = [edge_ISystem];
 systems_PaddleMovement.prototype = {
 	update: function(sprite,controlled) {
-		sprite.velocity.set_x(controlled.movingDirection * Settings.paddleSpeed);
+		sprite.velocity.set_x(controlled.movingDirection * controlled.speed);
 		return true;
 	}
 	,toString: function() {
@@ -77903,16 +78125,133 @@ systems_PaddleMovement_$SystemProcess.prototype = {
 	}
 	,__class__: systems_PaddleMovement_$SystemProcess
 };
-var testing_ShortcutManager = function(notifier) {
+var systems_TouchController = function() {
+	this.__process__ = new systems_TouchController_$SystemProcess(this);
+};
+$hxClasses["systems.TouchController"] = systems_TouchController;
+systems_TouchController.__name__ = ["systems","TouchController"];
+systems_TouchController.__interfaces__ = [edge_ISystem];
+systems_TouchController.prototype = {
+	update: function(paddle,player,team) {
+		if(flixel_FlxG.touches.list.length == 0) {
+			player.movingDirection = 0;
+			return true;
+		}
+		var paddle1 = paddle.x + paddle.width / 2;
+		var screenHalf = team.map.get(team.keyType(components_Direction)).direction;
+		var _g = 0;
+		var _g1 = flixel_FlxG.touches.list;
+		while(_g < _g1.length) {
+			var t = _g1[_g];
+			++_g;
+			var _this = t.input;
+			if(!(_this.current == 1 || _this.current == 2) || flixel_math_FlxMath.numericComparison(t.screenY,flixel_FlxG.height / 2) != screenHalf) {
+				continue;
+			}
+			var difference = t.screenX - paddle1;
+			if(Math.abs(difference) < Settings.unit(0.5)) {
+				difference = 0;
+			}
+			player.movingDirection = flixel_math_FlxMath.numericComparison(difference,0);
+		}
+		return true;
+	}
+	,toString: function() {
+		return "systems.TouchController";
+	}
+	,__process__: null
+	,__class__: systems_TouchController
+};
+var systems_TouchController_$SystemProcess = function(system) {
+	this.system = system;
+	this.updateItems = new edge_View();
+};
+$hxClasses["systems.TouchController_SystemProcess"] = systems_TouchController_$SystemProcess;
+systems_TouchController_$SystemProcess.__name__ = ["systems","TouchController_SystemProcess"];
+systems_TouchController_$SystemProcess.__interfaces__ = [edge_core_ISystemProcess];
+systems_TouchController_$SystemProcess.prototype = {
+	removeEntity: function(entity) {
+		this.updateItems.tryRemove(entity);
+	}
+	,addEntity: function(entity) {
+		this.updateMatchRequirements(entity);
+	}
+	,system: null
+	,updateItems: null
+	,update: function(engine,delta) {
+		var result = true;
+		var data;
+		var item = this.updateItems.iterator();
+		while(item.hasNext()) {
+			data = item.next().data;
+			result = this.system.update(data.paddle,data.player,data.team);
+			if(!result) {
+				break;
+			}
+		}
+		return result;
+	}
+	,updateMatchRequirements: function(entity) {
+		this.updateItems.tryRemove(entity);
+		var count = 3;
+		var o = { paddle : null, player : null, team : null};
+		var component = entity.map.iterator();
+		while(component.hasNext()) {
+			var component1 = component.next();
+			if(js_Boot.__instanceof(component1,flixel_FlxSprite)) {
+				o.paddle = component1;
+				if(--count == 0) {
+					break;
+				} else {
+					continue;
+				}
+			}
+			if(js_Boot.__instanceof(component1,components_PlayerControlled)) {
+				o.player = component1;
+				if(--count == 0) {
+					break;
+				} else {
+					continue;
+				}
+			}
+			if(js_Boot.__instanceof(component1,edge_Entity)) {
+				o.team = component1;
+				if(--count == 0) {
+					break;
+				} else {
+					continue;
+				}
+			}
+		}
+		if(count == 0) {
+			this.updateItems.tryAdd(entity,o);
+		}
+	}
+	,__class__: systems_TouchController_$SystemProcess
+};
+var testing_OrientationSwitcher = function() {
+	flixel_FlxBasic.call(this);
+	this._landscape = flixel_FlxG.width > flixel_FlxG.height;
+};
+$hxClasses["testing.OrientationSwitcher"] = testing_OrientationSwitcher;
+testing_OrientationSwitcher.__name__ = ["testing","OrientationSwitcher"];
+testing_OrientationSwitcher.__super__ = flixel_FlxBasic;
+testing_OrientationSwitcher.prototype = $extend(flixel_FlxBasic.prototype,{
+	_landscape: null
+	,_width: null
+	,_height: null
+	,__class__: testing_OrientationSwitcher
+});
+var testing_shortcut_ShortcutManager = function(notifier) {
 	this._keyList = [];
 	this._shortcuts = [];
 	flixel_FlxBasic.call(this);
 	this._notifier = notifier;
 };
-$hxClasses["testing.ShortcutManager"] = testing_ShortcutManager;
-testing_ShortcutManager.__name__ = ["testing","ShortcutManager"];
-testing_ShortcutManager.__super__ = flixel_FlxBasic;
-testing_ShortcutManager.prototype = $extend(flixel_FlxBasic.prototype,{
+$hxClasses["testing.shortcut.ShortcutManager"] = testing_shortcut_ShortcutManager;
+testing_shortcut_ShortcutManager.__name__ = ["testing","shortcut","ShortcutManager"];
+testing_shortcut_ShortcutManager.__super__ = flixel_FlxBasic;
+testing_shortcut_ShortcutManager.prototype = $extend(flixel_FlxBasic.prototype,{
 	_notifier: null
 	,_shortcuts: null
 	,_keyList: null
@@ -77920,99 +78259,20 @@ testing_ShortcutManager.prototype = $extend(flixel_FlxBasic.prototype,{
 		if(color == null) {
 			color = -1;
 		}
-		if(this._shortcuts.length > 9) {
-			return this;
-		}
-		var _g = 1;
-		while(_g < 10) {
-			var i = _g++;
-			if(this._shortcuts[i] != null) {
-				continue;
-			}
-			this._shortcuts[i] = { shortcutFunction : shortcutFunction, message : message, getMessage : getMessage, color : color};
-		}
 		return this;
 	}
 	,removeShortcut: function(shortcutFunction) {
-		var _g = 0;
-		var _g1 = this._shortcuts;
-		while(_g < _g1.length) {
-			var shortcut = _g1[_g];
-			++_g;
-			if(shortcut.shortcutFunction != shortcutFunction) {
-				continue;
-			}
-			HxOverrides.remove(this._shortcuts,shortcut);
-			break;
-		}
 	}
-	,update: function(elapsed) {
-		flixel_FlxBasic.prototype.update.call(this,elapsed);
-		this.updateKeyList();
-		this.runShortcuts();
-	}
-	,updateKeyList: function() {
-		var keyList = flixel_FlxG.keys.justPressed;
-		this._keyList[1] = keyList.keyManager.checkStatus(49,keyList.status);
-		this._keyList[2] = keyList.keyManager.checkStatus(50,keyList.status);
-		this._keyList[3] = keyList.keyManager.checkStatus(51,keyList.status);
-		this._keyList[4] = keyList.keyManager.checkStatus(52,keyList.status);
-		this._keyList[5] = keyList.keyManager.checkStatus(53,keyList.status);
-		this._keyList[6] = keyList.keyManager.checkStatus(54,keyList.status);
-		this._keyList[7] = keyList.keyManager.checkStatus(55,keyList.status);
-		this._keyList[8] = keyList.keyManager.checkStatus(56,keyList.status);
-		this._keyList[9] = keyList.keyManager.checkStatus(57,keyList.status);
-	}
-	,runShortcuts: function() {
-		var _g1 = 1;
-		var _g = this._keyList.length;
-		while(_g1 < _g) {
-			var i = _g1++;
-			if(!this._keyList[i]) {
-				continue;
-			}
-			var shortcut = this._shortcuts[i];
-			if(shortcut != null) {
-				shortcut.shortcutFunction();
-				if(!(shortcut.message != null || shortcut.getMessage != null)) {
-					continue;
-				}
-				this.notifyShortcut(shortcut);
-			} else {
-				this.notifyMessage("Num " + i + ": No shortcut assigned");
-			}
-		}
-	}
-	,containsMessage: function(shortcut) {
-		if(shortcut.message == null) {
-			return shortcut.getMessage != null;
-		} else {
-			return true;
-		}
-	}
-	,notifyShortcut: function(shortcut) {
-		this.notifyMessage(shortcut.message != null?shortcut.message:shortcut.getMessage());
-	}
-	,getMessage: function(shortcut) {
-		if(shortcut.message != null) {
-			return shortcut.message;
-		} else {
-			return shortcut.getMessage();
-		}
-	}
-	,notifyMessage: function(message) {
-		this._notifier.notify(message);
-	}
-	,__class__: testing_ShortcutManager
+	,__class__: testing_shortcut_ShortcutManager
 });
-var testing_ShortcutNotifier = function() {
+var testing_shortcut_ShortcutNotifier = function() {
 	flixel_text_FlxText.call(this,0,flixel_FlxG.height * 0.7,flixel_FlxG.width,"",20);
 	this.set_alignment("center");
 };
-$hxClasses["testing.ShortcutNotifier"] = testing_ShortcutNotifier;
-testing_ShortcutNotifier.__name__ = ["testing","ShortcutNotifier"];
-testing_ShortcutNotifier.__super__ = flixel_text_FlxText;
-testing_ShortcutNotifier.prototype = $extend(flixel_text_FlxText.prototype,{
+$hxClasses["testing.shortcut.ShortcutNotifier"] = testing_shortcut_ShortcutNotifier;
+testing_shortcut_ShortcutNotifier.__name__ = ["testing","shortcut","ShortcutNotifier"];
+testing_shortcut_ShortcutNotifier.__super__ = flixel_text_FlxText;
+testing_shortcut_ShortcutNotifier.prototype = $extend(flixel_text_FlxText.prototype,{
 	_fadeOutTween: null
 	,notify: function(message,duration) {
 		if(duration == null) {
@@ -78034,15 +78294,15 @@ testing_ShortcutNotifier.prototype = $extend(flixel_text_FlxText.prototype,{
 		}
 		this._fadeOutTween = flixel_tweens_FlxTween.tween(this,{ alpha : 0},0.5);
 	}
-	,__class__: testing_ShortcutNotifier
+	,__class__: testing_shortcut_ShortcutNotifier
 });
-var testing_ShortcutWrapper = function() {
+var testing_shortcut_ShortcutWrapper = function() {
 	flixel_group_FlxTypedGroup.call(this);
 };
-$hxClasses["testing.ShortcutWrapper"] = testing_ShortcutWrapper;
-testing_ShortcutWrapper.__name__ = ["testing","ShortcutWrapper"];
-testing_ShortcutWrapper.__super__ = flixel_group_FlxTypedGroup;
-testing_ShortcutWrapper.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
+$hxClasses["testing.shortcut.ShortcutWrapper"] = testing_shortcut_ShortcutWrapper;
+testing_shortcut_ShortcutWrapper.__name__ = ["testing","shortcut","ShortcutWrapper"];
+testing_shortcut_ShortcutWrapper.__super__ = flixel_group_FlxTypedGroup;
+testing_shortcut_ShortcutWrapper.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 	_manager: null
 	,_notifier: null
 	,addShortcut: function(shortcutFunction,message,getMessage,color) {
@@ -78053,7 +78313,7 @@ testing_ShortcutWrapper.prototype = $extend(flixel_group_FlxTypedGroup.prototype
 	}
 	,removeShortcut: function(shortcutFunction) {
 	}
-	,__class__: testing_ShortcutWrapper
+	,__class__: testing_shortcut_ShortcutWrapper
 });
 var thx_Arrays = function() { };
 $hxClasses["thx.Arrays"] = thx_Arrays;
@@ -84608,8 +84868,8 @@ var ui_Button = function(x,y,text,onClick,fieldWidth) {
 	flixel_ui_FlxButton.call(this,x,y,text,onClick);
 	this.label.set_color(-1);
 	this.label.set_size(25);
-	this.label.set_fieldWidth(fieldWidth != null?fieldWidth:Settings.playField.width * 0.75);
-	this.label.set_alignment("left");
+	this.label.set_fieldWidth(fieldWidth != null?fieldWidth:flixel_FlxG.width * 0.5);
+	this.label.set_alignment("center");
 	this.makeGraphic(this.label.get_width(),this.label.get_height(),0);
 };
 $hxClasses["ui.Button"] = ui_Button;
@@ -84646,64 +84906,40 @@ ui_ButtonMenu.prototype = $extend(flixel_group_FlxTypedSpriteGroup.prototype,{
 	,__class__: ui_ButtonMenu
 });
 var ui_gameplay_MenuButton = function() {
-	ui_Button.call(this,0,5,ui_gameplay_MenuButton.MENU,$bind(this,this.onClick),Settings.leftSpace.width);
+	ui_Button.call(this,0,0,"MENU",$bind(this,this.backToMenu),Settings.leftSpace.width);
 	this.label.set_alignment("center");
-	this.label.set_wordWrap(true);
+	if(Settings.get_portrait()) {
+		this.rotateLabel();
+	}
 	UI.hide(this);
-	flixel_input_mouse_FlxMouseEventManager.add(this,null,null,null,$bind(this,this.resetOnMouseLeaving),false,true,false);
 };
 $hxClasses["ui.gameplay.MenuButton"] = ui_gameplay_MenuButton;
 ui_gameplay_MenuButton.__name__ = ["ui","gameplay","MenuButton"];
 ui_gameplay_MenuButton.__super__ = ui_Button;
 ui_gameplay_MenuButton.prototype = $extend(ui_Button.prototype,{
-	resetOnMouseLeaving: function(_) {
-		var Text = ui_gameplay_MenuButton.MENU;
-		if(this.label == null) {
-			if(Text != null) {
-				this.set_label(new flixel_text_FlxText(this.x + this.labelOffsets[0].x,this.y + this.labelOffsets[0].y,80,Text));
-				this.label.setFormat(null,8,3355443,"center");
-				this.label.set_alpha(this.labelAlphas[this.status]);
-				this.label.drawFrame(true);
-			}
-		} else {
-			this.label.set_text(Text);
-		}
+	rotateLabel: function() {
+		this.label.set_fieldWidth(this.label.get_width() + 50);
+		this.set_width(this.label.get_fieldWidth());
+		this.swapWidthAndHeight();
+		this.screenCenter(flixel_util_FlxAxes.Y);
+		var _this = this.label.offset;
+		var X = this.get_width() * 1.5;
+		var Y = this.get_height() * -0.35;
+		_this.set_x(_this.x + X);
+		_this.set_y(_this.y + Y);
+		this.label.set_angle(90);
 	}
-	,onClick: function() {
-		if((this.label != null?this.label.text:null) == ui_gameplay_MenuButton.MENU) {
-			var Text = ui_gameplay_MenuButton.CLICK_AGAIN;
-			if(this.label == null) {
-				if(Text != null) {
-					this.set_label(new flixel_text_FlxText(this.x + this.labelOffsets[0].x,this.y + this.labelOffsets[0].y,80,Text));
-					this.label.setFormat(null,8,3355443,"center");
-					this.label.set_alpha(this.labelAlphas[this.status]);
-					this.label.drawFrame(true);
-				}
-			} else {
-				this.label.set_text(Text);
-			}
-		} else if((this.label != null?this.label.text:null) == ui_gameplay_MenuButton.CLICK_AGAIN) {
-			var Text1 = ui_gameplay_MenuButton.MENU;
-			if(this.label == null) {
-				if(Text1 != null) {
-					this.set_label(new flixel_text_FlxText(this.x + this.labelOffsets[0].x,this.y + this.labelOffsets[0].y,80,Text1));
-					this.label.setFormat(null,8,3355443,"center");
-					this.label.set_alpha(this.labelAlphas[this.status]);
-					this.label.drawFrame(true);
-				}
-			} else {
-				this.label.set_text(Text1);
-			}
-			this.backToMenu();
-		}
-		this.set_height(this.label.get_height());
+	,swapWidthAndHeight: function() {
+		var w = this.get_width();
+		this.set_width(this.get_height());
+		this.set_height(w);
 	}
 	,backToMenu: function() {
 		UI.hide(this);
 		UI.hide(G.ui.winnerText);
 		UI.hide(G.ui.playAgainButton);
 		UI.show(G.ui.titleMenu);
-		G.game.restartSwitchControl();
+		G.game.startMenuDemoMode();
 		G.game.inMenu = true;
 	}
 	,__class__: ui_gameplay_MenuButton
@@ -84737,7 +84973,7 @@ ui_gameplay_playAgain_PlayAgainButtonController.prototype = {
 	,__class__: ui_gameplay_playAgain_PlayAgainButtonController
 };
 var ui_gameplay_playAgain_PlayAgainButtonView = function(container,controller) {
-	ui_Button.call(this,0,0,"PLAY AGAIN",$bind(controller,controller.onClick),Settings.playField.width);
+	ui_Button.call(this,0,0,"PLAY AGAIN",$bind(controller,controller.onClick),Settings.playField.width * 0.75);
 	this.label.set_alignment("center");
 	this.screenCenter();
 	UI.hide(container);
@@ -84750,13 +84986,19 @@ ui_gameplay_playAgain_PlayAgainButtonView.prototype = $extend(ui_Button.prototyp
 });
 var ui_gameplay_scoreboard_Scoreboard = function() {
 	flixel_group_FlxTypedGroup.call(this);
-	this._upper = G.game.get_teamUpper().map.get(Type.getClassName(components_Score));
-	this._lower = G.game.get_teamLower().map.get(Type.getClassName(components_Score));
+	var _this = G.game.get_teamUpper();
+	this._upper = _this.map.get(_this.keyType(components_Score));
+	var _this1 = G.game.get_teamLower();
+	this._lower = _this1.map.get(_this1.keyType(components_Score));
 	this.view = new ui_gameplay_scoreboard_ScoreboardView();
 	this.presenter = new ui_gameplay_scoreboard_ScoreboardPresenter(this.view);
 	this.add(this.view);
 	this._upper.changed.add(($_=this.presenter,$bind($_,$_.updateUpper)));
 	this._lower.changed.add(($_=this.presenter,$bind($_,$_.updateLower)));
+	var s = G.game.signals;
+	s.menuDemoMode.add(($_=this.presenter,$bind($_,$_.enableOnePlayerMode)));
+	s.onePlayerMode.add(($_=this.presenter,$bind($_,$_.enableOnePlayerMode)));
+	s.twoPlayerMode.add(($_=this.presenter,$bind($_,$_.enableTwoPlayerMode)));
 };
 $hxClasses["ui.gameplay.scoreboard.Scoreboard"] = ui_gameplay_scoreboard_Scoreboard;
 ui_gameplay_scoreboard_Scoreboard.__name__ = ["ui","gameplay","scoreboard","Scoreboard"];
@@ -84781,19 +85023,49 @@ ui_gameplay_scoreboard_ScoreboardPresenter.prototype = {
 	,updateUpper: function(score) {
 		this.view.upperScore.set_text(score == null?"null":"" + score);
 	}
+	,enableOnePlayerMode: function() {
+		this.view.upperScore.set_angle(this.view.lowerScore.set_angle(0));
+	}
+	,enableTwoPlayerMode: function() {
+		this.view.upperScore.set_angle(this.view.lowerScore.set_angle(90));
+	}
 	,__class__: ui_gameplay_scoreboard_ScoreboardPresenter
 };
 var ui_gameplay_scoreboard_ScoreboardView = function() {
 	flixel_group_FlxTypedSpriteGroup.call(this);
-	var space = Settings.rightSpace;
-	this.upperScore = new flixel_text_FlxText(0,0,space.width,"0",50);
-	this.lowerScore = new flixel_text_FlxText(0,0,space.width,"0",50);
+	var size = Settings.get_landscape()?50:30;
+	var fieldWidth = Settings.rightSpace.width - Settings.unit(2);
+	this.upperScore = new flixel_text_FlxText(0,0,fieldWidth,"10",size);
+	this.lowerScore = new flixel_text_FlxText(0,0,fieldWidth,"10",size);
 	this.upperScore.set_alignment(this.lowerScore.set_alignment("center"));
 	this.add(this.upperScore);
 	this.add(this.lowerScore);
-	this.setPosition(space.x,space.y);
-	var object = this.lowerScore;
-	object.y = space.y + space.height - object.height;
+	if(Settings.get_portrait()) {
+		this.upperScore.set_fieldWidth(this.lowerScore.set_fieldWidth(this.upperScore.get_width()));
+	}
+	var object = this.upperScore;
+	var X = flixel_FlxG.width;
+	var Y = flixel_FlxG.height / 2;
+	var point = flixel_math_FlxPoint._pool.get().set(X,Y);
+	point._inPool = false;
+	point._weak = true;
+	object.x = point.x - object.width;
+	object.y = point.y - object.height;
+	if(point._weak) {
+		point.put();
+	}
+	var object1 = this.lowerScore;
+	var X1 = flixel_FlxG.width;
+	var Y1 = flixel_FlxG.height / 2;
+	var point1 = flixel_math_FlxPoint._pool.get().set(X1,Y1);
+	point1._inPool = false;
+	point1._weak = true;
+	object1.x = point1.x - object1.width;
+	object1.y = point1.y;
+	if(point1._weak) {
+		point1.put();
+	}
+	this.upperScore.set_text(this.lowerScore.set_text("0"));
 };
 $hxClasses["ui.gameplay.scoreboard.ScoreboardView"] = ui_gameplay_scoreboard_ScoreboardView;
 ui_gameplay_scoreboard_ScoreboardView.__name__ = ["ui","gameplay","scoreboard","ScoreboardView"];
@@ -84819,7 +85091,7 @@ ui_gameplay_winnerText_WinnerText.prototype = $extend(flixel_text_FlxText.protot
 		if(G.game.inMenu) {
 			return;
 		}
-		this.presenter.showAt(team.map.get(Type.getClassName(components_Direction)).direction);
+		this.presenter.showAt(team.map.get(team.keyType(components_Direction)).direction);
 	}
 	,__class__: ui_gameplay_winnerText_WinnerText
 });
@@ -84863,7 +85135,10 @@ ui_gameplay_winnerText_WinnerTextPresenter.prototype = {
 	,__class__: ui_gameplay_winnerText_WinnerTextPresenter
 };
 var ui_title_Instruction = function() {
-	flixel_text_FlxText.call(this,0,flixel_FlxG.height - 125,Settings.playField.width,"A or Left Arrow to Move Left\nD or Right Arrow to Move Right\n\nBy Dlean Jeans\n@DleanJeans",15);
+	var text = "Score " + Settings.scoreToWin + " points to win\n";
+	text += flixel_FlxG.html5.onMobile?"Move Left: Tap Left of paddle\nMove Right: Tap Right of paddle":"Move Left: A/Left Arrow\nMove Right: D/Right Arrow";
+	text += "\n\nBy Dlean Jeans\n@DleanJeans";
+	flixel_text_FlxText.call(this,0,flixel_FlxG.height - 150,Settings.playField.width,text,15);
 	this.set_alignment("center");
 	this.screenCenter(flixel_util_FlxAxes.X);
 };
@@ -87867,7 +88142,5 @@ thx_Strings.SPLIT_LINES = new EReg("\r\n|\n\r|\n|\r","g");
 thx_Strings.CANONICALIZE_LINES = new EReg("\r\n|\n\r|\r","g");
 thx_fp__$Map_Map_$Impl_$.delta = 5;
 thx_fp__$Map_Map_$Impl_$.ratio = 2;
-ui_gameplay_MenuButton.MENU = "MENU";
-ui_gameplay_MenuButton.CLICK_AGAIN = "CLICK AGAIN";
 ApplicationMain.main();
 })(typeof exports != "undefined" ? exports : typeof window != "undefined" ? window : typeof self != "undefined" ? self : this, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
