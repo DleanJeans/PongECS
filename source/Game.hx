@@ -82,7 +82,9 @@ class Game extends FlxGroup {
 		postUpdate = engine.createPhase();
 		physics = engine.createPhase();
 		
-		postUpdate.add(new KeyboardController());
+		if (FlxG.onMobile)
+			postUpdate.add(new TouchController());
+		else postUpdate.add(new KeyboardController());
 		postUpdate.add(new AIBallTracker());
 		postUpdate.add(new AIController());
 		postUpdate.add(new PaddleMovement());

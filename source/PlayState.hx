@@ -28,6 +28,7 @@ class PlayState extends FlxState {
 		game.start();
 		
 		FlxG.console.registerClass(G);
+		FlxG.console.registerClass(Settings);
 		
 		setupShortcuts();
 		hideSomeDebugBoxes();
@@ -41,9 +42,11 @@ class PlayState extends FlxState {
 		#if FLX_DEBUG
 		game.walls.ignoreDrawDebug = true;
 		game.paddles.ignoreDrawDebug = true;
+		game.balls.ignoreDrawDebug = true;
 		ui.scoreboard.view.ignoreDrawDebug = true;
 		ui.menuButton.label.ignoreDrawDebug = true;
 		ui.title.ignoreDrawDebug = true;
+		ui.buttons.ignoreDrawDebug = true;
 		#end
 	}
 	
