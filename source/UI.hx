@@ -43,7 +43,14 @@ class UI extends FlxGroup {
 		menuButton = new MenuButton();
 		
 		buttons = new ButtonMenu(FlxG.width * 0.25, title.sub.getBottom() + 50);
-		buttons.addButton("Start", onClick_start);
+		if (FlxG.onMobile) {
+			buttons.addButton("ONE PLAYER", onClick_onePlayer);
+			buttons.addButton("TWO PLAYER", onClick_twoPlayer);
+		}
+		else {
+			buttons.addButton("START", onClick_onePlayer);
+		}
+		buttons.screenCenter();
 		
 		add(gameplay);
 		add(titleMenu);
@@ -63,11 +70,19 @@ class UI extends FlxGroup {
 		titleMenu.add(buttons);
 	}
 	
-	function onClick_start() {
+	function onClick_onePlayer() {
+		onClick_start(G.game.startOnePlayerMode);
+	}
+	
+	function onClick_twoPlayer() {
+		onClick_start(G.game.startTwoPlayerMode);
+	}
+	
+	function onClick_start(startMode:Void->Void) {
 		hide(titleMenu);
 		show(menuButton);
-		G.game.restartSwitchControl();
 		G.game.inMenu = false;
+		startMode();
 	}
 	
 }

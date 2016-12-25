@@ -35,7 +35,7 @@ class PlayState extends FlxState {
 	}
 	
 	function setupShortcuts() {
-		tester.shortcut.addShortcut(game.paddleManager.switchControlMode, "Switched Control Mode");
+		tester.shortcut.addShortcut(game.paddleManager.switchP1Control, "Switched Control Mode");
 	}
 	
 	function hideSomeDebugBoxes() {

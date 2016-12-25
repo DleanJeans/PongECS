@@ -38,7 +38,7 @@ class MenuButton extends Button {
 		UI.hide(G.ui.winnerText);
 		UI.hide(G.ui.playAgainButton);
 		UI.show(G.ui.titleMenu);
-		G.game.restartSwitchControl();
+		G.game.startMenuDemoMode();
 		G.game.inMenu = true;
 	}
 	

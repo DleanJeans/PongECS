@@ -16,15 +16,33 @@ class PaddleManager {
 		paddles = G.game.paddles;
 	}
 	
-	public function switchControlMode() {
-		if (p1.existsType(AIControlled)) {
-			p1.removeType(AIControlled);
-			p1.add(new PlayerControlled());
-		}
-		else {
-			p1.removeType(PlayerControlled);
-			p1.add(new AIControlled());
-		}
+	public function switchBothToPlayers() {
+		switchControl(p1, new PlayerControlled());
+		switchControl(p2, new PlayerControlled());
+	}
+	
+	public function switchBothToAI() {
+		switchControl(p1, new AIControlled());
+		switchControl(p2, new AIControlled());
+	}
+	
+	public function switchP1ToPlayer() {
+		switchControl(p1, new PlayerControlled());
+	}
+	
+	public function switchP1Control() { 
+		if (p1.existsExactType(AIControlled))
+			switchP1ToPlayer();
+		else switchControl(p1, new AIControlled());
+	}
+	
+	function switchControl(p:Entity, newControl:Controlled) {
+		// if p already has the same type Controlled
+		if (p.existsExactType(cast Type.getClass(newControl)))
+			return;
+		
+		p.removeType(Controlled);
+		p.add(newControl);
 	}
 	
 	public function centerPaddles() {

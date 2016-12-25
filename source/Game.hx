@@ -42,6 +42,42 @@ class Game extends FlxGroup {
 		super();
 	}
 	
+	public function create() {
+		paddleManager.createPaddles();
+		wallManager.createWalls();
+	}
+	
+	public function startMenuDemoMode() {
+		paddleManager.switchBothToAI();
+		restart();
+	}
+	
+	public function startOnePlayerMode() {
+		paddleManager.switchP1ToPlayer();
+		restart();
+	}
+	
+	public function startTwoPlayerMode() {
+		paddleManager.switchBothToPlayers();
+		restart();
+	}
+	
+	public function restart() {
+		reset();
+		start();
+	}
+	
+	public function reset() {
+		teamManager.resetScore();
+		paddleManager.centerPaddles();
+		ballManager.reset();
+	}
+	
+	public function start() {
+		ballSpawner.spawnAtDirection(FlxG.random.sign()); // Either Up or Down
+		resume();
+	}
+	
 	public function setup() {
 		setupEngine();
 		setupSpriteGroups();
@@ -111,28 +147,6 @@ class Game extends FlxGroup {
 		super.update(elapsed);
 		postUpdate.update(elapsed);
 		physics.update(elapsed);
-	}
-	
-	public function create() {
-		paddleManager.createPaddles();
-		wallManager.createWalls();
-	}
-	
-	public function start() {
-		ballSpawner.spawnAtDirection(FlxG.random.sign()); // Up or Down
-	}
-	
-	public function restartSwitchControl() {
-		paddleManager.switchControlMode();
-		restart();
-	}
-	
-	public function restart() {
-		teamManager.resetScore();
-		paddleManager.centerPaddles();
-		ballManager.reset();
-		start();
-		resume();
 	}
 	
 	/**
