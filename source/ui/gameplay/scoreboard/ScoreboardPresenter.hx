@@ -15,4 +15,12 @@ class ScoreboardPresenter {
 		view.upperScore.text = Std.string(score);
 	}
 	
+	public function enableOnePlayerMode() {
+		view.upperScore.angle = view.lowerScore.angle = 0;
+	}
+	
+	public function enableTwoPlayerMode() {
+		view.upperScore.angle = view.lowerScore.angle = 90;
+	}
+	
 }

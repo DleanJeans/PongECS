@@ -4,6 +4,7 @@ import components.Goal;
 import edge.Entity;
 import flixel.FlxSprite;
 import flixel.util.FlxSignal;
+import managers.GameSignals.Signal0;
 
 typedef Signal0 = FlxSignal;
 typedef Signal1<T:Dynamic> = FlxTypedSignal<T->Void>;
@@ -28,6 +29,10 @@ class GameSignals {
 	
 	public var won				:Signal1<Entity> = new Signal1<Entity>();
 	public var won_0			:Signal0 		= new Signal0();
+	
+	public var menuDemoMode		:Signal0		= new Signal0();
+	public var onePlayerMode	:Signal0		= new Signal0();
+	public var twoPlayerMode	:Signal0		= new Signal0();
 	
 	public function new() {}
 	

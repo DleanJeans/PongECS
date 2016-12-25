@@ -22,7 +22,7 @@ class ScoreboardView extends FlxSpriteGroup {
 		add(upperScore);
 		add(lowerScore);
 		
-		if (!Settings.landscape)
+		if (Settings.portrait)
 			upperScore.fieldWidth = lowerScore.fieldWidth = upperScore.width;
 		
 		upperScore.setBottomRight(Position.screenMidRight);

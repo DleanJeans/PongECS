@@ -50,16 +50,19 @@ class Game extends FlxGroup {
 	public function startMenuDemoMode() {
 		paddleManager.switchBothToAI();
 		restart();
+		signals.menuDemoMode.dispatch();
 	}
 	
 	public function startOnePlayerMode() {
 		paddleManager.switchP1ToPlayer();
 		restart();
+		signals.onePlayerMode.dispatch();
 	}
 	
 	public function startTwoPlayerMode() {
 		paddleManager.switchBothToPlayers();
 		restart();
+		signals.twoPlayerMode.dispatch();
 	}
 	
 	public function restart() {
