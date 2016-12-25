@@ -24,6 +24,7 @@ class ShortcutManager extends FlxBasic {
 	
 	public function addShortcut(shortcutFunction:Void->Void, 
 	?message:String, ?getMessage:Void->String, color:FlxColor = FlxColor.WHITE):ShortcutManager {
+		#if testing
 		if (_shortcuts.length > 9) {
 			FlxG.log.warn("Cannot addShortcut()! Shortcut slots full!");
 			return this;
@@ -40,18 +41,22 @@ class ShortcutManager extends FlxBasic {
 				color: color
 			};
 		}
+		#end
 		return this;
 	}
 	
 	public inline function removeShortcut(shortcutFunction:Void->Void) {
+		#if testing
 		for (shortcut in _shortcuts) {
 			if (shortcut.shortcutFunction != shortcutFunction) 
 				continue;
 			_shortcuts.remove(shortcut);
 			break;
 		}
+		#end
 	}
 	
+	#if testing
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 		
@@ -59,7 +64,7 @@ class ShortcutManager extends FlxBasic {
 		runShortcuts();
 	}
 	
-	private function updateKeyList() {
+	function updateKeyList() {
 		var keyList:FlxKeyList = FlxG.keys.justPressed;
 		_keyList[1] = keyList.ONE;
 		_keyList[2] = keyList.TWO;
@@ -110,5 +115,6 @@ class ShortcutManager extends FlxBasic {
 	function notifyMessage(message:String) {
 		_notifier.notify(message);
 	}
+	#end
 	
 }

@@ -24,8 +24,10 @@ class Settings {
 	public static var rightSpace(default, null):FlxRect;
 	
 	public static function init() {
+		#if html5
 		if (FlxG.onMobile)
 			FlxG.mouse.visible = false;
+		#end
 		
 		playField = FlxRect.get(0, 0, 450, 600);
 		

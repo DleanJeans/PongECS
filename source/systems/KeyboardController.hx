@@ -7,10 +7,12 @@ import flixel.FlxSprite;
 
 class KeyboardController implements ISystem {
 	public function update(sprite:FlxSprite, player:PlayerControlled) {
+		#if !FLX_NO_KEYBOARD
 		player.movingDirection = 0;
 		if (FlxG.keys.anyPressed([A, LEFT]))
 			player.movingDirection += -1;
 		if (FlxG.keys.anyPressed([D, RIGHT]))
 			player.movingDirection += 1;
+		#end
 	}
 }
