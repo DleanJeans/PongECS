@@ -18,6 +18,7 @@ class Settings {
 	// the area where the game happens
 	public static var playField(default, null):FlxRect;
 	public static var landscape(get, never):Bool; static function get_landscape() return FlxG.width >= FlxG.height;
+	public static var portrait(get, never):Bool; static function get_portrait() return !landscape;
 	
 	// the spaces on 2 sides of the playfield
 	public static var leftSpace(default, null):FlxRect;

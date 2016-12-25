@@ -3,20 +3,34 @@ package ui.gameplay;
 import flixel.FlxG;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
+import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import ui.Button;
 
 class MenuButton extends Button {
 	public function new() {
-		super(5, 0, "MENU", backToMenu, Settings.leftSpace.width - 10);
-		setupLabel();
+		super(0, 0, "MENU", backToMenu, Settings.leftSpace.width);
+		
+		label.alignment = FlxTextAlign.CENTER;
+		if (Settings.portrait)
+			rotateLabel();
 		UI.hide(this);
 	}
 	
-	public function setupLabel() {
-		var landscape = Settings.landscape;
-		label.autoSize = !landscape;
-		label.alignment = landscape ? FlxTextAlign.CENTER : FlxTextAlign.LEFT;
+	function rotateLabel() {
+		label.fieldWidth = label.width + 50;
+		width = label.fieldWidth;
+		
+		swapWidthAndHeight();
+		screenCenter(FlxAxes.Y);
+		label.offset.add(width * 1.5, height * -0.35);
+		label.angle = 90;
+	}
+	
+	function swapWidthAndHeight() {
+		var w = width;
+		width = height;
+		height = w;
 	}
 	
 	function backToMenu() {
