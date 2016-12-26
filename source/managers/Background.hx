@@ -17,7 +17,7 @@ class Background extends FlxSprite {
 		var color = FlxColor.WHITE;
 		color.alphaFloat = 0.5;
 		var lineStyle:LineStyle = {
-			thickness: 2,
+			thickness: Settings.unit(0.25),
 			color: color,
 		};
 		FlxSpriteUtil.drawLine(this, 0, height / 2, width, height / 2, lineStyle);
