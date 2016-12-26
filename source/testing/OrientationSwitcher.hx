@@ -5,13 +5,12 @@ import flixel.FlxG;
 import flixel.system.scaleModes.StageSizeScaleMode;
 
 class OrientationSwitcher extends FlxBasic {
-	var _landscape:Bool;
-	var _width:Int;
-	var _height:Int;
+	static var widths 	= [800, 360, 400];
+	static var heights 	= [600, 640, 600];
+	static var index = 0;
 	
 	public function new() {
 		super();
-		_landscape = FlxG.width > FlxG.height;
 		#if testing
 		FlxG.scaleMode = new StageSizeScaleMode();
 		#end
@@ -24,32 +23,25 @@ class OrientationSwitcher extends FlxBasic {
 	}
 	
 	function waitKeyToSwitch() {
-		if (!keyPressed())
-			return;
+		if (pressedLeft()) {
+			index--;
+			if (index < 0)
+				index = widths.length - 1;
+		}
+		else if (pressedRight()) {
+			index++;
+			if (index >= widths.length)
+				index = 0;
+		}
+		else return;
 		
-		if (_landscape)
-			switchToPortrait();
-		else switchToLandscape();
-		
-		_landscape = !_landscape;
-		FlxG.resizeWindow(_width, _height);
-		FlxG.resetGame();
+		FlxG.resizeWindow(widths[index], heights[index]);
+		FlxG.resetState();
 	}
 	
-	function keyPressed():Bool return FlxG.keys.justPressed.TAB;
+	function pressedLeft():Bool return FlxG.keys.justPressed.LBRACKET;
+	function pressedRight():Bool return FlxG.keys.justPressed.RBRACKET;
 	
-	function switchToPortrait() {
-		setSize(360, 640);
-	}
-	
-	function switchToLandscape() {
-		setSize(800, 600);
-	}
-	
-	function setSize(width:Int, height:Int) {
-		_width = width;
-		_height = height;
-	}
 	#end
 	
 }
