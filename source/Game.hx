@@ -20,6 +20,8 @@ class Game extends FlxGroup {
 	public var walls(default, null):FlxSpriteGroup;
 	public var balls(default, null):FlxSpriteGroup;
 	
+	public var background(default, null):Background;
+	
 	public var signals(default, null):GameSignals;
 	
 	public var wallManager(default, null):WallManager;
@@ -83,6 +85,7 @@ class Game extends FlxGroup {
 	
 	public function setup() {
 		setupEngine();
+		setupBackground();
 		setupSpriteGroups();
 		setupManagers();
 		setupPhases();
@@ -92,6 +95,11 @@ class Game extends FlxGroup {
 	function setupEngine() {
 		engine = new Engine();
 		NULL_ENTITY = engine.create();
+	}
+	
+	function setupBackground() {
+		background = new Background();
+		add(background);
 	}
 	
 	function setupSpriteGroups() {
