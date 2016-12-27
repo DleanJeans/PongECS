@@ -13,7 +13,7 @@ class Instruction extends FlxText {
 		else "Move Left: A/Left Arrow\nMove Right: D/Right Arrow";
 		text += "\n\nBy Dlean Jeans\n@DleanJeans";
 		
-		super(0, FlxG.height - 150, Settings.playField.width, text, 15);
+		super(0, FlxG.height - 150, Settings.playField.width, text, Settings.scale(15));
 		alignment = FlxTextAlign.CENTER;
 		screenCenter(FlxAxes.X);
 	}

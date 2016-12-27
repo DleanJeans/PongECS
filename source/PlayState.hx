@@ -2,6 +2,7 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxState;
+import flixel.text.FlxText;
 
 class PlayState extends FlxState {
 	public static var game(default, null):Game;

@@ -6,6 +6,10 @@ import flixel.system.scaleModes.FixedScaleAdjustSizeScaleMode;
 import flixel.system.scaleModes.FixedScaleMode;
 
 class Settings {
+	static var _scale(default, null):Float = 1;
+	public static function scale(value:Float):Int
+		return Std.int(value * _scale);
+	
 	public static var paddleSpeed:Float;
 	public static var ballSpeed:Float;
 	public static var maxDeflectedAngle:Int = 45;
@@ -32,19 +36,19 @@ class Settings {
 		
 		playField = FlxRect.get(0, 0, 450, 600);
 		
-		var scale = 1.0;
+		_scale = 1;
 		unitLength = 16;
 		
 		// scale to fit playField to screen
 		if (Settings.landscape)
-			scale =  FlxG.height / playField.height;
-		else scale = FlxG.width / playField.width;
+			_scale =  FlxG.height / playField.height;
+		else _scale = FlxG.width / playField.width;
 		
-		playField.setSize(playField.width * scale, playField.height * scale);
+		playField.setSize(scale(playField.width), scale(playField.height));
 		playField.setPosition((FlxG.width - playField.width) / 2, (FlxG.height - playField.height) / 2);
 		
 		// scale unitLength too
-		unitLength = Std.int(unitLength * scale);
+		unitLength = scale(unitLength);
 		paddleSpeed = playField.width;
 		ballSpeed = playField.height * 0.75;
 		

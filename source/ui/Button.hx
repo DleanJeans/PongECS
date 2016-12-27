@@ -10,7 +10,7 @@ class Button extends FlxButton {
 		super(x, y, text, onClick);
 		
 		label.color = FlxColor.WHITE;
-		label.size = 25;
+		label.size = Settings.scale(25);
 		label.fieldWidth = fieldWidth != null ? fieldWidth : FlxG.width * 0.5;
 		label.alignment = FlxTextAlign.CENTER;
 		

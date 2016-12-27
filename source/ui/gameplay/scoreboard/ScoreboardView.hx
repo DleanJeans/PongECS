@@ -13,6 +13,7 @@ class ScoreboardView extends FlxSpriteGroup {
 		
 		var size = if (Settings.landscape) 50 else 30;
 		var fieldWidth = Settings.rightSpace.width - Settings.unit(2);
+		size = Settings.scale(size);
 		
 		upperScore = new FlxText(0, 0, fieldWidth, "10", size);
 		lowerScore = new FlxText(0, 0, fieldWidth, "10", size);

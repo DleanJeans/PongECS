@@ -11,8 +11,8 @@ class Title extends FlxSpriteGroup {
 	public function new() {
 		super();
 		
-		name = new FlxText(0, 100, 0, "Pong", 100);
-		sub = new FlxText(0, 0, 0, "ECS", 30);
+		name = new FlxText(0, 100, 0, "Pong", Settings.scale(100));
+		sub = new FlxText(0, 0, 0, "ECS", Settings.scale(30));
 		
 		add(name);
 		add(sub);
