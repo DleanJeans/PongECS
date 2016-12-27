@@ -14,8 +14,8 @@ class BallManager {
 	
 	public function reset() {
 		for (ball in balls) {
-			var ballEntity:Entity = G.game.getEntity(ball);
-			ballEntity.destroy();
+			var entity = G.game.getEntity(ball);
+			entity.destroy();
 			killBall(ball);
 		}
 	}
@@ -30,7 +30,7 @@ class BallManager {
 			velocity.putWeak();
 		}
 		
-		return G.game.engine.create([sprite]);
+		return G.game.createEntity([sprite]);
 	}
 	
 	public function killBall(ball:FlxSprite) {

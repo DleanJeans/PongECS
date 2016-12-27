@@ -37,7 +37,7 @@ class WallManager {
 		sprite.immovable = true;
 		rect.putWeak();
 		
-		return G.game.engine.create([sprite]);
+		return G.game.createEntity([sprite]);
 	}
 	
 }

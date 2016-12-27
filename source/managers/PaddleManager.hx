@@ -65,7 +65,7 @@ class PaddleManager {
 		sprite.immovable = true;
 		sprite.facing = facing;
 		
-		return G.game.engine.create([sprite]);
+		return G.game.createEntity([sprite]);
 	}
 	
 }

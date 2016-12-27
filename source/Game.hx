@@ -24,6 +24,7 @@ class Game extends FlxGroup {
 	
 	public var signals(default, null):GameSignals;
 	
+	public var entityTracker(default, null):EntityTracker;
 	public var wallManager(default, null):WallManager;
 	public var goalManager(default, null):GoalManager;
 	public var paddleManager(default, null):PaddleManager;
@@ -113,6 +114,7 @@ class Game extends FlxGroup {
 	}
 	
 	function setupManagers() {
+		entityTracker = new EntityTracker();
 		signals = new GameSignals();
 		paddleManager = new PaddleManager();
 		goalManager = new GoalManager();
@@ -167,21 +169,24 @@ class Game extends FlxGroup {
 	 * @param	group Optional FlxSpriteGroup to add to. If not passed, the sprite will be added to `container`.
 	 * @return A FlxSprite.
 	 */
-	public inline function createSprite(x:Float = 0, y:Float = 0, ?group:FlxSpriteGroup):FlxSprite {
+	public function createSprite(x:Float = 0, y:Float = 0, ?group:FlxSpriteGroup):FlxSprite {
 		return _spriteManager.createSprite(x, y, group);
 	}
 	
-	/**
-	 * Find the Entity containing `sprite`.
-	 * @param	sprite The sprite contained by a Entity.
-	 * @return The entity containing `sprite` or NULL_ENTITY if none contains the `sprite`.
-	 */
 	public function getEntity(sprite:FlxSprite):Entity {
-		for (entity in engine.entities()) {
-			if (entity.exists(sprite))
-				return entity;
+		return entityTracker.get(sprite);
+	}
+	
+	public function createEntity(?components:Array<{}>):Entity {
+		var entity = engine.create(components);
+		if (components == null)
+			return entity;
+		
+		for (c in components) {
+			if (Std.is(c, FlxSprite))
+				entityTracker.add(cast c, entity);
 		}
-		return NULL_ENTITY;
+		return entity;
 	}
 	
 	public function pause() {
