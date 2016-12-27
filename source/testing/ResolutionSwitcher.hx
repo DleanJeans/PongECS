@@ -4,7 +4,7 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.system.scaleModes.StageSizeScaleMode;
 
-class OrientationSwitcher extends FlxBasic {
+class ResolutionSwitcher extends FlxBasic {
 	static var widths 	= [800, 360, 400];
 	static var heights 	= [600, 640, 600];
 	static var index = 0;
