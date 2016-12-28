@@ -24,7 +24,6 @@ class Game extends FlxGroup {
 	
 	public var signals(default, null):GameSignals;
 	
-	public var entityTracker(default, null):EntityTracker;
 	public var wallManager(default, null):WallManager;
 	public var goalManager(default, null):GoalManager;
 	public var paddleManager(default, null):PaddleManager;
@@ -40,7 +39,8 @@ class Game extends FlxGroup {
 	public var inMenu:Bool = true;
 	
 	var _spriteManager(default, null):SpriteManager;
-
+	var _entityTracker(default, null):EntityTracker;
+	
 	public function new() {
 		super();
 	}
@@ -114,7 +114,6 @@ class Game extends FlxGroup {
 	}
 	
 	function setupManagers() {
-		entityTracker = new EntityTracker();
 		signals = new GameSignals();
 		paddleManager = new PaddleManager();
 		goalManager = new GoalManager();
@@ -125,6 +124,7 @@ class Game extends FlxGroup {
 		restarter = new Restarter();
 		
 		_spriteManager = new SpriteManager();
+		_entityTracker = new EntityTracker();
 	}
 	
 	function setupPhases() {
@@ -174,7 +174,7 @@ class Game extends FlxGroup {
 	}
 	
 	public function getEntity(sprite:FlxSprite):Entity {
-		return entityTracker.get(sprite);
+		return _entityTracker.get(sprite);
 	}
 	
 	public function createEntity(?components:Array<{}>):Entity {
@@ -184,7 +184,7 @@ class Game extends FlxGroup {
 		
 		for (c in components) {
 			if (Std.is(c, FlxSprite))
-				entityTracker.add(cast c, entity);
+				_entityTracker.add(cast c, entity);
 		}
 		return entity;
 	}
