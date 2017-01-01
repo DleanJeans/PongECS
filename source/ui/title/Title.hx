@@ -2,6 +2,7 @@ package ui.title;
 
 import flixel.FlxG;
 import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 
 class Title extends FlxSpriteGroup {
@@ -11,13 +12,14 @@ class Title extends FlxSpriteGroup {
 	public function new() {
 		super();
 		
-		name = new FlxText(0, 100, 0, "Pong", G.settings.scale(100));
+		name = new FlxText(0, 0, 0, "Pong", G.settings.scale(100));
 		sub = new FlxText(0, 0, 0, "ECS", G.settings.scale(30));
 		
 		add(name);
 		add(sub);
 		
-		name.setCenterX(Position.screenCenter.x);
+		var upperHalfScreenCenter = FlxPoint.weak(FlxG.width * 0.5, FlxG.height * 0.25);
+		name.setCenter(upperHalfScreenCenter);
 		sub.setTopRight(name.getBottomRight());
 	}
 	
