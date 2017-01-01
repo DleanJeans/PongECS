@@ -63,8 +63,8 @@ class ScoreboardPresenter {
 	}
 	
 	function updateHitboxes() {
-		_p1.updateHitbox();
-		_p2.updateHitbox();
+		_p1.fieldWidth = _p1.width;
+		_p2.fieldWidth = _p2.width;
 	}
 	
 }
