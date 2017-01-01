@@ -43,13 +43,8 @@ class UI extends FlxGroup {
 		menuButton = new MenuButton();
 		
 		buttons = new ButtonMenu(FlxG.width * 0.25, title.sub.getBottom() + 50);
-		if (FlxG.onMobile) {
-			buttons.addButton("ONE PLAYER", onClick_onePlayer);
-			buttons.addButton("TWO PLAYER", onClick_twoPlayer);
-		}
-		else {
-			buttons.addButton("START", onClick_onePlayer);
-		}
+		buttons.addButton("ONE PLAYER", onClick_onePlayer);
+		buttons.addButton("TWO PLAYER", onClick_twoPlayer);
 		buttons.screenCenter();
 		
 		add(gameplay);
@@ -68,6 +63,12 @@ class UI extends FlxGroup {
 		titleMenu.add(title);
 		titleMenu.add(instruction);
 		titleMenu.add(buttons);
+		
+		forEachOfType(FlxSprite, setCameraToUICam, true);
+	}
+	
+	function setCameraToUICam(sprite:FlxSprite) {
+		sprite.cameras = [G.cameras.uiCam];
 	}
 	
 	function onClick_onePlayer() {

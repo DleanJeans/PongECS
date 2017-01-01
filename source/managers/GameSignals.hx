@@ -33,6 +33,8 @@ class GameSignals {
 	public var menuDemoMode		:Signal0		= new Signal0();
 	public var onePlayerMode	:Signal0		= new Signal0();
 	public var twoPlayerMode	:Signal0		= new Signal0();
+	public var splitScreen		:Signal0		= new Signal0();
+	public var splitScreenOff	:Signal0		= new Signal0();
 	
 	public function new() {}
 	

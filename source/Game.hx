@@ -54,6 +54,7 @@ class Game extends FlxGroup {
 		paddleManager.switchBothToAI();
 		restart();
 		signals.menuDemoMode.dispatch();
+		tryDisableSplitScreen();
 	}
 	
 	public function startOnePlayerMode() {
@@ -66,6 +67,25 @@ class Game extends FlxGroup {
 		paddleManager.switchBothToPlayers();
 		restart();
 		signals.twoPlayerMode.dispatch();
+		tryEnableSplitScreen();
+	}
+	
+	function tryEnableSplitScreen() {
+		if (!Settings.splitScreenPossible)
+			return;
+			
+		Settings.splitScreen = true;
+		G.cameras.tryEnableSplitScreen();
+		signals.splitScreen.dispatch();
+	}
+	
+	function tryDisableSplitScreen() {
+		if (!Settings.splitScreenPossible)
+			return;
+			
+		Settings.splitScreen = false;
+		G.cameras.tryDisableSplitScreen();
+		signals.splitScreenOff.dispatch();
 	}
 	
 	public function restart() {

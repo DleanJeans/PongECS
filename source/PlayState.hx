@@ -5,19 +5,22 @@ import flixel.FlxState;
 import flixel.text.FlxText;
 
 class PlayState extends FlxState {
-	public static var game(default, null):Game;
-	public static var ui(default, null):UI;
-	public static var tester(default, null):Tester;
+	public var game(default, null):Game;
+	public var ui(default, null):UI;
+	public var camManager(default, null):CameraManager;
+	public var tester(default, null):Tester;
 	
 	override public function create() {
 		Settings.init();
 		
 		game = new Game();
 		ui = new UI();
+		camManager = new CameraManager();
 		tester = new Tester();
 		
-		G.provide(this, game, ui);
+		G.provide(this, game, ui, camManager);
 		
+		camManager.setup();
 		game.setup();
 		ui.setup();
 		
@@ -28,15 +31,19 @@ class PlayState extends FlxState {
 		game.create();
 		game.start();
 		
-		FlxG.console.registerClass(G);
-		FlxG.console.registerClass(Settings);
-		
 		setupShortcuts();
+		registerToConsole();
 		hideSomeDebugBoxes();
 	}
 	
 	function setupShortcuts() {
 		tester.shortcut.addShortcut(game.paddleManager.switchP1Control, "Switched Control Mode");
+	}
+	
+	function registerToConsole() {
+		FlxG.console.registerClass(G);
+		FlxG.console.registerClass(Settings);
+		FlxG.console.registerClass(CameraManager);
 	}
 	
 	function hideSomeDebugBoxes() {

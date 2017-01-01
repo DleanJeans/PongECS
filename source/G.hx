@@ -9,11 +9,13 @@ class G {
 	public static var state(default, null):FlxState;
 	public static var game(default, null):Game;
 	public static var ui(default, null):UI;
+	public static var cameras(default, null):CameraManager;
 
-	public static function provide(state:FlxState, game:Game, ui:UI) {
+	public static function provide(state:FlxState, game:Game, ui:UI, cameras:CameraManager) {
 		G.state = state;
 		G.game = game;
 		G.ui = ui;
+		G.cameras = cameras;
 	}
 	
 }
