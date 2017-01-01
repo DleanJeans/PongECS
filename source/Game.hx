@@ -151,13 +151,16 @@ class Game extends FlxGroup {
 		postUpdate = engine.createPhase();
 		physics = engine.createPhase();
 		
+		ballSpawner = new BallSpawner(ballManager);
+		
+		postUpdate.add(new AutoFramerate());
 		if (FlxG.onMobile)
 			postUpdate.add(new TouchController());
 		else postUpdate.add(new KeyboardController());
 		postUpdate.add(new AIBallTracker());
 		postUpdate.add(new AIController());
 		postUpdate.add(new PaddleMovement());
-		postUpdate.add(ballSpawner = new BallSpawner(ballManager));
+		postUpdate.add(ballSpawner);
 		physics.add(new PaddleBounder());
 		physics.add(new Collision());
 	}
