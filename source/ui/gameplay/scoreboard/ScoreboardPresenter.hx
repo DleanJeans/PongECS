@@ -28,7 +28,7 @@ class ScoreboardPresenter {
 	}
 	
 	public function enableTwoPlayerMode() {
-		if (Settings.portrait)
+		if (G.settings.portrait)
 			_p1.angle = _p2.angle = 90;
 	}
 	
@@ -41,8 +41,8 @@ class ScoreboardPresenter {
 		_p1.setMidRight(Position.screenCenter);
 		_p2.setMidLeft(Position.screenCenter);
 		
-		_p1.x -= Settings.unit();
-		_p2.x += Settings.unit();
+		_p1.x -= G.settings.unit();
+		_p2.x += G.settings.unit();
 		
 		reset();
 	}
@@ -50,7 +50,7 @@ class ScoreboardPresenter {
 	public function disableSplitScreenMode() {
 		reset();
 		
-		_p1.fieldWidth = _p2.fieldWidth = Settings.scoreboardFieldWidth;
+		_p1.fieldWidth = _p2.fieldWidth = G.settings.scoreboardFieldWidth;
 		updateHitboxes();
 		
 		_p1.setBottomRight(Position.screenMidRight);

@@ -71,19 +71,19 @@ class Game extends FlxGroup {
 	}
 	
 	function tryEnableSplitScreen() {
-		if (!Settings.splitScreenPossible)
+		if (!G.settings.splitScreenPossible)
 			return;
 			
-		Settings.splitScreen = true;
+		G.settings.splitScreen = true;
 		G.cameras.tryEnableSplitScreen();
 		signals.splitScreen.dispatch();
 	}
 	
 	function tryDisableSplitScreen() {
-		if (!Settings.splitScreenPossible)
+		if (!G.settings.splitScreenPossible)
 			return;
 			
-		Settings.splitScreen = false;
+		G.settings.splitScreen = false;
 		G.cameras.tryDisableSplitScreen();
 		signals.splitScreenOff.dispatch();
 	}

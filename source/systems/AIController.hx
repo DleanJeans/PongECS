@@ -11,14 +11,14 @@ class AIController implements ISystem {
 		var paddle = sprite.getCenterX();
 		ai.target = ai.ballCenterX;
 		if (!ai.ballComing)
-			ai.target = Settings.playField.getCenterX();
+			ai.target = G.settings.playField.getCenterX();
 		ai.target = snap(paddle, ai.target);
 		
 		ai.movingDirection = FlxMath.numericComparison(ai.target, paddle);
 	}
 	
 	function snap(paddle:Float, target:Float):Float {
-		if (Math.abs(paddle - target) < Settings.unit(0.5))
+		if (Math.abs(paddle - target) < G.settings.unit(0.5))
 			target = paddle;
 		return target;
 	}

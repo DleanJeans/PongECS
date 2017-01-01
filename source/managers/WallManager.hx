@@ -19,8 +19,8 @@ class WallManager {
 	}
 	
 	public function createWalls() {
-		var pf = Settings.playField;
-		var width = Settings.unit();
+		var pf = G.settings.playField;
+		var width = G.settings.unit();
 		var halfWidth = width * 0.5;
 		
 		top = createWall(FlxRect.weak(pf.x, pf.y, pf.width, width));
@@ -28,7 +28,7 @@ class WallManager {
 		
 		var leftRect = FlxRect.weak(pf.left - width, pf.y, width, pf.height),
 		rightRect = FlxRect.weak(pf.right, pf.y, width, pf.height);
-		if (Settings.landscape) {
+		if (G.settings.landscape) {
 			leftRect.x += halfWidth;
 			rightRect.x -= halfWidth;
 		}

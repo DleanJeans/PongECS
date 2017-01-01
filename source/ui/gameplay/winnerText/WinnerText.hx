@@ -9,7 +9,7 @@ class WinnerText extends FlxText {
 	public var presenter(default, null):WinnerTextPresenter;
 	
 	public function new() {
-		super(0, 0, 0, "WINNER", Settings.scale(60));
+		super(0, 0, 0, "WINNER", G.settings.scale(60));
 		alignment = FlxTextAlign.CENTER;
 		UI.hide(this);
 		

@@ -1,18 +1,16 @@
 package;
 
-import flixel.FlxState;
-
 /**
  * The global class for everything
  */
 class G {
-	public static var state(default, null):FlxState;
+	public static var settings(default, null):Settings;
 	public static var game(default, null):Game;
 	public static var ui(default, null):UI;
 	public static var cameras(default, null):CameraManager;
 
-	public static function provide(state:FlxState, game:Game, ui:UI, cameras:CameraManager) {
-		G.state = state;
+	public static function provide(settings:Settings, game:Game, ui:UI, cameras:CameraManager) {
+		G.settings = settings;
 		G.game = game;
 		G.ui = ui;
 		G.cameras = cameras;

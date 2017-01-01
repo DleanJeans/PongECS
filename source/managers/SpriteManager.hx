@@ -1,5 +1,6 @@
 package managers;
 
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 
@@ -22,7 +23,7 @@ class SpriteManager {
 		sprite.setPosition(x, y);
 		if (group != null)
 			group.add(sprite);
-		else G.state.add(sprite);
+		else FlxG.state.add(sprite);
 		return sprite;
 	}
 	

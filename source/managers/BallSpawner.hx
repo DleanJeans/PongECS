@@ -50,7 +50,7 @@ class BallSpawner implements ISystem {
 		var angle = 90.0 * Std.int(direction);
 		angle += FlxG.random.float(-1, 1) * 30;
 		
-		return manager.createBall(FlxVelocity.velocityFromAngle(angle, Settings.ballSpeed));
+		return manager.createBall(FlxVelocity.velocityFromAngle(angle, G.settings.ballSpeed));
 	}
 	
 	function spawnOnTimerGoingOff(direction:Int, _) {

@@ -18,7 +18,7 @@ class Score implements IComponent {
 	}
 	
 	public function won():Bool {
-		return score == Settings.scoreToWin;
+		return score == G.settings.scoreToWin;
 	}
 	
 	function set_score(newScore:Int):Int {

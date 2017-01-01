@@ -32,17 +32,17 @@ class CameraManager {
 	}
 	
 	public function tryEnableSplitScreen() {
-		if (!Settings.splitScreenPossible)
+		if (!G.settings.splitScreenPossible)
 			return;
 		
 		gameCam1.visible = gameCam2.visible = true;
-		gameCam1.scroll.x = gameCam2.scroll.x = Settings.playField.x;
+		gameCam1.scroll.x = gameCam2.scroll.x = G.settings.playField.x;
 		
 		FlxCamera.defaultCameras = [gameCam1, gameCam2];
 	}
 	
 	public function tryDisableSplitScreen() {
-		if (!Settings.splitScreenPossible)
+		if (!G.settings.splitScreenPossible)
 			return;
 		
 		gameCam1.visible = gameCam2.visible = false;

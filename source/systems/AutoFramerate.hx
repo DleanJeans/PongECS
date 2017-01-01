@@ -11,12 +11,10 @@ class AutoFramerate implements ISystem {
 	public function update() {
 		var ticks = FlxG.game.ticks;
 		var elapsed = (ticks - _lastTicks) / 1000;
-		fps(default, null) = 1 / elapsed;
+		fps = 1 / elapsed;
 		_lastTicks = ticks;
 		
-		FlxG.timeScale = FlxG.drawFramerate / fps(default, null);
+		FlxG.timeScale = FlxG.drawFramerate / fps;
 		FlxG.timeScale = FlxMath.bound(FlxG.timeScale, 0.1, 2);
-		
-		_fpsText.text = "FPS: " + FlxMath.roundDecimal(fps(default, null), 1);
 	}
 }

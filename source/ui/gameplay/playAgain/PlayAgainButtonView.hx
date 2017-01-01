@@ -6,10 +6,10 @@ import ui.gameplay.winnerText.WinnerText;
 
 class PlayAgainButtonView extends Button {
 	public function new(container:PlayAgainButton, controller:PlayAgainButtonController) {
-		super(0, 0, "PLAY AGAIN", controller.onClick, Settings.playField.width * 0.75);
+		super(0, 0, "PLAY AGAIN", controller.onClick, G.settings.playField.width * 0.75);
 		label.alignment = FlxTextAlign.CENTER;
 		screenCenter();
-		y += Settings.unit(4);
+		y += G.settings.unit(4);
 		UI.hide(container);
 	}
 	

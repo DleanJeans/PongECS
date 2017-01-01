@@ -6,7 +6,7 @@ import flixel.FlxSprite;
 
 class PaddleBounder implements ISystem {
 	function update(sprite:FlxSprite, controlled:Controlled) {
-		var pf = Settings.playField;
+		var pf = G.settings.playField;
 		
 		if (sprite.x < pf.x)
 			sprite.x = pf.x;

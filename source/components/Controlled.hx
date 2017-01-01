@@ -9,10 +9,10 @@ class Controlled implements IComponent {
 	 * 1 = RIGHT
 	 */
 	public var movingDirection:Int = 0;
-	public var speed:Float = Settings.paddleSpeed;
+	public var speed:Float = G.settings.paddleSpeed;
 	
 	public function new(speedPercent:Float = 1) {
-		speed = speedPercent * Settings.paddleSpeed;
+		speed = speedPercent * G.settings.paddleSpeed;
 	}
 	
 	public function getVelocity():Float {

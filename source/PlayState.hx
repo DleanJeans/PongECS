@@ -5,20 +5,20 @@ import flixel.FlxState;
 import flixel.text.FlxText;
 
 class PlayState extends FlxState {
-	public var game(default, null):Game;
-	public var ui(default, null):UI;
-	public var camManager(default, null):CameraManager;
-	public var tester(default, null):Tester;
+	var settings:Settings;
+	var game:Game;
+	var ui:UI;
+	var camManager:CameraManager;
+	var tester:Tester;
 	
 	override public function create() {
-		Settings.init();
-		
+		settings = new Settings();
 		game = new Game();
 		ui = new UI();
 		camManager = new CameraManager();
 		tester = new Tester();
 		
-		G.provide(this, game, ui, camManager);
+		G.provide(settings, game, ui, camManager);
 		
 		camManager.setup();
 		game.setup();
@@ -42,8 +42,6 @@ class PlayState extends FlxState {
 	
 	function registerToConsole() {
 		FlxG.console.registerClass(G);
-		FlxG.console.registerClass(Settings);
-		FlxG.console.registerClass(CameraManager);
 	}
 	
 	function hideSomeDebugBoxes() {

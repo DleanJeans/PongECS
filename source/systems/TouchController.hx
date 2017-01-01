@@ -30,7 +30,7 @@ class TouchController implements ISystem {
 			
 			var target = touch.screenX;
 			var difference = target - paddle;
-			if (Math.abs(difference) < Settings.unit(0.5))
+			if (Math.abs(difference) < G.settings.unit(0.5))
 				difference = 0;
 			
 			player.movingDirection = FlxMath.numericComparison(difference, 0);

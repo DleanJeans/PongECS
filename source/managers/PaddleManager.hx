@@ -51,8 +51,8 @@ class PaddleManager {
 	}
 	
 	public function createPaddles() {
-		p1 = createPaddle(Settings.playField.bottom - Settings.unit(4), FlxObject.UP);
-		p2 = createPaddle(Settings.playField.y + Settings.unit(3), FlxObject.DOWN);
+		p1 = createPaddle(G.settings.playField.bottom - G.settings.unit(4), FlxObject.UP);
+		p2 = createPaddle(G.settings.playField.y + G.settings.unit(3), FlxObject.DOWN);
 		
 		p1.addMany([G.game.teamLower, new AIControlled()]);
 		p2.addMany([G.game.teamUpper, new AIControlled()]);
@@ -60,7 +60,7 @@ class PaddleManager {
 	
 	function createPaddle(y:Float = 0, facing:Int) {
 		var sprite = G.game.createSprite(0, y, paddles);
-		sprite.makeGraphic(Settings.unit(5), Settings.unit());
+		sprite.makeGraphic(G.settings.unit(5), G.settings.unit());
 		sprite.screenCenter(FlxAxes.X);
 		sprite.immovable = true;
 		sprite.facing = facing;

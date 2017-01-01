@@ -20,11 +20,11 @@ class WinnerTextPresenter {
 		UI.show(_view);
 		switch (teamPosition) {
 			case Direction.UP:
-				if (Settings.splitScreen)
+				if (G.settings.splitScreen)
 					showLowerRight();
 				else showUpper();
 			case Direction.DOWN:
-				if (Settings.splitScreen)
+				if (G.settings.splitScreen)
 					showLowerLeft();
 				else showLower();
 		}

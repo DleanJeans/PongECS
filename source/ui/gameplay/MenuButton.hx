@@ -9,10 +9,10 @@ import ui.Button;
 
 class MenuButton extends Button {
 	public function new() {
-		super(0, 0, "MENU", backToMenu, Settings.leftSpace.width);
+		super(0, 0, "MENU", backToMenu, G.settings.leftSpace.width);
 		
 		label.alignment = FlxTextAlign.CENTER;
-		if (Settings.portrait)
+		if (G.settings.portrait)
 			rotateLabel();
 		UI.hide(this);
 		

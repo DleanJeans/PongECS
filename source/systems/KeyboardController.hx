@@ -10,7 +10,7 @@ import flixel.FlxSprite;
 class KeyboardController implements ISystem {
 	public function update(sprite:FlxSprite, player:PlayerControlled, team:Entity) {
 		#if !FLX_NO_KEYBOARD
-		if (Settings.splitScreen)
+		if (G.settings.splitScreen)
 			updateTwoPlayer(sprite, player, team);
 		else updateOnePlayer(sprite, player, team);
 		#end
