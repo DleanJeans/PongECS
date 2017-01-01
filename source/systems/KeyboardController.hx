@@ -16,6 +16,7 @@ class KeyboardController implements ISystem {
 		#end
 	}
 	
+	#if !FLX_NO_KEYBOARD
 	function updateOnePlayer(sprite:FlxSprite, player:PlayerControlled, team:Entity) {
 		player.movingDirection = 0;
 		if (FlxG.keys.anyPressed([A, LEFT]))
@@ -50,4 +51,6 @@ class KeyboardController implements ISystem {
 	function moveRight(player:PlayerControlled) {
 		player.movingDirection += 1;
 	}
+	#end
+	
 }
