@@ -36,8 +36,7 @@ class ScoreboardPresenter {
 		reset(10);
 		
 		_p1.fieldWidth = _p2.fieldWidth = 0;
-		_p1.fieldWidth = _p1.width;
-		_p2.fieldWidth = _p2.width;
+		updateHitboxes();
 		
 		_p1.setMidRight(Position.screenCenter);
 		_p2.setMidLeft(Position.screenCenter);
@@ -52,6 +51,7 @@ class ScoreboardPresenter {
 		reset();
 		
 		_p1.fieldWidth = _p2.fieldWidth = Settings.scoreboardFieldWidth;
+		updateHitboxes();
 		
 		_p1.setBottomRight(Position.screenMidRight);
 		_p2.setTopRight(Position.screenMidRight);
@@ -60,6 +60,11 @@ class ScoreboardPresenter {
 	function reset(score:Int = 0) {
 		updateUpper(score);
 		updateLower(score);
+	}
+	
+	function updateHitboxes() {
+		_p1.updateHitbox();
+		_p2.updateHitbox();
 	}
 	
 }
