@@ -15,6 +15,19 @@ class MenuButton extends Button {
 		if (Settings.portrait)
 			rotateLabel();
 		UI.hide(this);
+		
+		var s = G.game.signals;
+		s.splitScreen.add(enableSplitScreenPosition);
+		s.splitScreenOff.add(disableSplitScreenPosition);
+	}
+	
+	function backToMenu() {
+		UI.hide(this);
+		UI.hide(G.ui.winnerText);
+		UI.hide(G.ui.playAgainButton);
+		UI.show(G.ui.titleMenu);
+		G.game.startMenuDemoMode();
+		G.game.inMenu = true;
 	}
 	
 	function rotateLabel() {
@@ -33,13 +46,12 @@ class MenuButton extends Button {
 		height = w;
 	}
 	
-	function backToMenu() {
-		UI.hide(this);
-		UI.hide(G.ui.winnerText);
-		UI.hide(G.ui.playAgainButton);
-		UI.show(G.ui.titleMenu);
-		G.game.startMenuDemoMode();
-		G.game.inMenu = true;
+	function enableSplitScreenPosition() {
+		screenCenter(FlxAxes.X);
+	}
+	
+	function disableSplitScreenPosition() {
+		setPosition();
 	}
 	
 }

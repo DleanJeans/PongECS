@@ -9,6 +9,7 @@ class PlayAgainButtonView extends Button {
 		super(0, 0, "PLAY AGAIN", controller.onClick, Settings.playField.width * 0.75);
 		label.alignment = FlxTextAlign.CENTER;
 		screenCenter();
+		y += Settings.unit(4);
 		UI.hide(container);
 	}
 	

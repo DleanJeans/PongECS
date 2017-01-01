@@ -28,6 +28,8 @@ class Scoreboard extends FlxGroup {
 		s.menuDemoMode.add(presenter.enableOnePlayerMode);
 		s.onePlayerMode.add(presenter.enableOnePlayerMode);
 		s.twoPlayerMode.add(presenter.enableTwoPlayerMode);
+		s.splitScreen.add(presenter.enableSplitScreenMode);
+		s.splitScreenOff.add(presenter.disableSplitScreenMode);
 	}
 	
 }

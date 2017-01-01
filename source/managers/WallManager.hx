@@ -21,11 +21,20 @@ class WallManager {
 	public function createWalls() {
 		var pf = Settings.playField;
 		var width = Settings.unit();
+		var halfWidth = width * 0.5;
 		
 		top = createWall(FlxRect.weak(pf.x, pf.y, pf.width, width));
 		bottom = createWall(FlxRect.weak(pf.x, pf.bottom - width, pf.width, width));
-		left = createWall(FlxRect.weak(pf.left - width, pf.y, width, pf.height));
-		right = createWall(FlxRect.weak(pf.right, pf.y, width, pf.height));
+		
+		var leftRect = FlxRect.weak(pf.left - width, pf.y, width, pf.height),
+		rightRect = FlxRect.weak(pf.right, pf.y, width, pf.height);
+		if (Settings.landscape) {
+			leftRect.x += halfWidth;
+			rightRect.x -= halfWidth;
+		}
+		
+		left = createWall(leftRect);
+		right = createWall(rightRect);
 		
 		top.add(G.game.teamUpper.get(Goal));
 		bottom.add(G.game.teamLower.get(Goal));
