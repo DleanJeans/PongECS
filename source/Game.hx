@@ -41,6 +41,8 @@ class Game extends FlxGroup {
 	var _spriteManager(default, null):SpriteManager;
 	var _entityTracker(default, null):EntityTracker;
 	
+	var _enableGameMode:Void->Void = function() {};
+	
 	public function new() {
 		super();
 	}
@@ -50,22 +52,31 @@ class Game extends FlxGroup {
 		wallManager.createWalls();
 	}
 	
-	public function startMenuDemoMode() {
+	public function prepareMenuDemoMode() {
+		_enableGameMode = startMenuDemoMode;
+	}
+	
+	public function prepareOnePlayerMode() {
+		_enableGameMode = startOnePlayerMode;
+	}
+	
+	public function prepareTwoPlayerMode() {
+		_enableGameMode = startTwoPlayerMode;
+	}
+	
+	function startMenuDemoMode() {
 		paddleManager.switchBothToAI();
-		restart();
 		signals.menuDemoMode.dispatch();
 		tryDisableSplitScreen();
 	}
 	
-	public function startOnePlayerMode() {
+	function startOnePlayerMode() {
 		paddleManager.switchP1ToPlayer();
-		restart();
 		signals.onePlayerMode.dispatch();
 	}
 	
-	public function startTwoPlayerMode() {
+	function startTwoPlayerMode() {
 		paddleManager.switchBothToPlayers();
-		restart();
 		signals.twoPlayerMode.dispatch();
 		tryEnableSplitScreen();
 	}
@@ -73,7 +84,7 @@ class Game extends FlxGroup {
 	function tryEnableSplitScreen() {
 		if (!G.settings.splitScreenPossible)
 			return;
-			
+		
 		G.settings.splitScreen = true;
 		G.cameras.tryEnableSplitScreen();
 		signals.splitScreen.dispatch();
@@ -82,13 +93,14 @@ class Game extends FlxGroup {
 	function tryDisableSplitScreen() {
 		if (!G.settings.splitScreenPossible)
 			return;
-			
+		
 		G.settings.splitScreen = false;
 		G.cameras.tryDisableSplitScreen();
 		signals.splitScreenOff.dispatch();
 	}
 	
 	public function restart() {
+		_enableGameMode();
 		reset();
 		start();
 	}
@@ -100,8 +112,15 @@ class Game extends FlxGroup {
 	}
 	
 	public function start() {
-		ballSpawner.spawnAtDirection(FlxG.random.sign()); // Either Up or Down
+		spawnBall();
 		resume();
+	}
+	
+	/**
+	 * Spawns the ball randomly either up or down
+	 */
+	function spawnBall() {
+		ballSpawner.spawnAtDirection(FlxG.random.sign());
 	}
 	
 	public function setup() {

@@ -15,4 +15,9 @@ class ButtonMenu extends FlxTypedSpriteGroup<Button> {
 		return add(_lastButton);
 	}
 	
+	public function switchToOtherMenu(other:ButtonMenu) {
+		UI.hide(this);
+		UI.show(other);
+	}
+	
 }

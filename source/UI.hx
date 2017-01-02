@@ -23,8 +23,9 @@ class UI extends FlxGroup {
 	
 	public var title(default, null):Title;
 	public var instruction(default, null):Instruction;
-	public var buttons(default, null):ButtonMenu;
 	public var menuButton(default, null):MenuButton;
+	public var mainMenu(default, null):ButtonMenu;
+	public var scoresMenu(default, null):ButtonMenu;
 
 	public function new() {
 		super();
@@ -42,10 +43,18 @@ class UI extends FlxGroup {
 		instruction = new Instruction();
 		menuButton = new MenuButton();
 		
-		buttons = new ButtonMenu(FlxG.width * 0.25, title.sub.getBottom() + 50);
-		buttons.addButton("ONE PLAYER", onClick_onePlayer);
-		buttons.addButton("TWO PLAYER", onClick_twoPlayer);
-		buttons.screenCenter();
+		mainMenu = new ButtonMenu();
+		mainMenu.addButton("ONE PLAYER", onClick_onePlayer);
+		mainMenu.addButton("TWO PLAYER", onClick_twoPlayer);
+		mainMenu.screenCenter();
+		
+		scoresMenu = new ButtonMenu();
+		scoresMenu.addButton("3", onClick_3);
+		scoresMenu.addButton("5", onClick_5);
+		scoresMenu.addButton("10", onClick_10);
+		scoresMenu.addButton("BACK", onClick_back_scoresMenu);
+		scoresMenu.screenCenter();
+		hide(scoresMenu);
 		
 		add(gameplay);
 		add(titleMenu);
@@ -62,7 +71,8 @@ class UI extends FlxGroup {
 		titleMenu.add(background);
 		titleMenu.add(title);
 		titleMenu.add(instruction);
-		titleMenu.add(buttons);
+		titleMenu.add(mainMenu);
+		titleMenu.add(scoresMenu);
 		
 		forEachOfType(FlxSprite, setCameraToUICam, true);
 	}
@@ -72,18 +82,45 @@ class UI extends FlxGroup {
 	}
 	
 	function onClick_onePlayer() {
-		onClick_start(G.game.startOnePlayerMode);
+		G.game.prepareOnePlayerMode();
+		switchToScoresMenu();
 	}
 	
 	function onClick_twoPlayer() {
-		onClick_start(G.game.startTwoPlayerMode);
+		G.game.prepareTwoPlayerMode();
+		switchToScoresMenu();
 	}
 	
-	function onClick_start(startMode:Void->Void) {
+	function switchToScoresMenu() {
+		mainMenu.switchToOtherMenu(scoresMenu);
+	}
+	
+	function onClick_3() {
+		G.settings.scoreToWin = 3;
+		leaveTitleMenu();
+	}
+	
+	function onClick_5() {
+		G.settings.scoreToWin = 5;
+		leaveTitleMenu();
+	}
+	
+	function onClick_10() {
+		G.settings.scoreToWin = 10;
+		leaveTitleMenu();
+	}
+	
+	function onClick_back_scoresMenu() {
+		scoresMenu.switchToOtherMenu(mainMenu);
+	}
+	
+	function leaveTitleMenu() {
 		hide(titleMenu);
 		show(menuButton);
+		hide(scoresMenu);
+		show(mainMenu);
 		G.game.inMenu = false;
-		startMode();
+		G.game.restart();
 	}
 	
 }
