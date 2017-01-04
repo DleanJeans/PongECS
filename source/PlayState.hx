@@ -52,7 +52,7 @@ class PlayState extends FlxState {
 		ui.scoreboard.view.ignoreDrawDebug = true;
 		ui.menuButton.label.ignoreDrawDebug = true;
 		ui.title.ignoreDrawDebug = true;
-		ui.mainMenu.ignoreDrawDebug = true;
+		ui.menus.ignoreDrawDebug = true;
 		#end
 	}
 	

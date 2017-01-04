@@ -3,7 +3,6 @@ package;
 import flixel.*;
 import flixel.group.*;
 import flixel.util.*;
-import ui.*;
 import ui.gameplay.*;
 import ui.gameplay.playAgain.*;
 import ui.gameplay.scoreboard.*;
@@ -24,8 +23,7 @@ class UI extends FlxGroup {
 	public var title(default, null):Title;
 	public var instruction(default, null):Instruction;
 	public var menuButton(default, null):MenuButton;
-	public var mainMenu(default, null):ButtonMenu;
-	public var scoresMenu(default, null):ButtonMenu;
+	public var menus(default, null):TitleMenus;
 
 	public function new() {
 		super();
@@ -42,19 +40,7 @@ class UI extends FlxGroup {
 		title = new Title();
 		instruction = new Instruction();
 		menuButton = new MenuButton();
-		
-		mainMenu = new ButtonMenu();
-		mainMenu.addButton("ONE PLAYER", onClick_onePlayer);
-		mainMenu.addButton("TWO PLAYER", onClick_twoPlayer);
-		mainMenu.screenCenter();
-		
-		scoresMenu = new ButtonMenu();
-		scoresMenu.addButton("3", onClick_3);
-		scoresMenu.addButton("5", onClick_5);
-		scoresMenu.addButton("10", onClick_10);
-		scoresMenu.addButton("BACK", onClick_back_scoresMenu);
-		scoresMenu.screenCenter();
-		hide(scoresMenu);
+		menus = new TitleMenus();
 		
 		add(gameplay);
 		add(titleMenu);
@@ -71,8 +57,7 @@ class UI extends FlxGroup {
 		titleMenu.add(background);
 		titleMenu.add(title);
 		titleMenu.add(instruction);
-		titleMenu.add(mainMenu);
-		titleMenu.add(scoresMenu);
+		titleMenu.add(menus);
 		
 		forEachOfType(FlxSprite, setCameraToUICam, true);
 	}
@@ -80,47 +65,5 @@ class UI extends FlxGroup {
 	function setCameraToUICam(sprite:FlxSprite) {
 		sprite.cameras = [G.cameras.uiCam];
 	}
-	
-	function onClick_onePlayer() {
-		G.game.prepareOnePlayerMode();
-		switchToScoresMenu();
-	}
-	
-	function onClick_twoPlayer() {
-		G.game.prepareTwoPlayerMode();
-		switchToScoresMenu();
-	}
-	
-	function switchToScoresMenu() {
-		mainMenu.switchToOtherMenu(scoresMenu);
-	}
-	
-	function onClick_3() {
-		G.settings.scoreToWin = 3;
-		leaveTitleMenu();
-	}
-	
-	function onClick_5() {
-		G.settings.scoreToWin = 5;
-		leaveTitleMenu();
-	}
-	
-	function onClick_10() {
-		G.settings.scoreToWin = 10;
-		leaveTitleMenu();
-	}
-	
-	function onClick_back_scoresMenu() {
-		scoresMenu.switchToOtherMenu(mainMenu);
-	}
-	
-	function leaveTitleMenu() {
-		hide(titleMenu);
-		show(menuButton);
-		hide(scoresMenu);
-		show(mainMenu);
-		G.game.inMenu = false;
-		G.game.restart();
-	}
-	
+
 }
