@@ -9,8 +9,6 @@ import systems.*;
 import ui.*;
 
 class Game extends FlxGroup {
-	public static var NULL_ENTITY:Entity;
-	
 	public var engine(default, null):Engine;
 	
 	public var teamUpper(get, null):Entity; function get_teamUpper() return teamManager.teamUpper;
@@ -134,7 +132,6 @@ class Game extends FlxGroup {
 	
 	function setupEngine() {
 		engine = new Engine();
-		NULL_ENTITY = engine.create();
 	}
 	
 	function setupBackground() {

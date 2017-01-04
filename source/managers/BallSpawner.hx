@@ -41,16 +41,16 @@ class BallSpawner implements ISystem {
 	 * @param	delay Optional delay.
 	 * @return	The entity containing the ball as FlxSprite. Game.NULL_ENTITY if delayed.
 	 */
-	public function spawnAtDirection(direction:Int, delay:Float = 0.5):Entity {
+	public function spawnAtDirection(direction:Int, delay:Float = 0.5) {
 		if (delay > 0) {
 			_timer.start(delay, spawnOnTimerGoingOff.bind(direction));
-			return Game.NULL_ENTITY;
+			return;
 		}
 		
 		var angle = 90.0 * Std.int(direction);
 		angle += FlxG.random.float(-1, 1) * 30;
 		
-		return manager.createBall(FlxVelocity.velocityFromAngle(angle, G.settings.ballSpeed));
+		manager.createBall(FlxVelocity.velocityFromAngle(angle, G.settings.ballSpeed));
 	}
 	
 	function spawnOnTimerGoingOff(direction:Int, _) {
