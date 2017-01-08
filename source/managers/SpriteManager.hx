@@ -12,18 +12,13 @@ class SpriteManager {
 	}
 	
 	/**
-	 * Create a new FlxSprite and add it to `group` or `container`
-	 * @param	x Initial x position
-	 * @param	y Initial y position
-	 * @param	group Optional FlxSpriteGroup to add to. If not passed, the sprite will be added to `container`
-	 * @return A FlxSprite
+	 * Create a new FlxSprite and add it to the optional `group`.
 	 */
 	public function createSprite(x:Float = 0, y:Float = 0, ?group:FlxSpriteGroup):FlxSprite {
 		var sprite = _pool.recycle(FlxSprite);
 		sprite.setPosition(x, y);
 		if (group != null)
 			group.add(sprite);
-		else FlxG.state.add(sprite);
 		return sprite;
 	}
 	
