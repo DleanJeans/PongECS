@@ -6,7 +6,6 @@ import edge.Entity;
 import edge.ISystem;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.input.touch.FlxTouch;
 import flixel.math.FlxMath;
 
 class TouchController implements ISystem {
@@ -20,8 +19,7 @@ class TouchController implements ISystem {
 		var paddle = paddle.getCenterX();
 		var screenHalf = team.get(Direction).direction;
 		
-		for (t in FlxG.touches.list) {
-			var touch = t;
+		for (touch in FlxG.touches.list) {
 			var touchNotPressed = !touch.pressed;
 			var notOnTheSameScreenHalf = FlxMath.numericComparison(touch.screenY, FlxG.height / 2) != screenHalf;
 			
