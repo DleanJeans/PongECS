@@ -1,10 +1,7 @@
 package;
 
-import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.math.FlxRect;
-import flixel.system.scaleModes.FixedScaleAdjustSizeScaleMode;
-import flixel.system.scaleModes.FixedScaleMode;
 
 class Settings {
 	var _scale(default, null):Float = 1;
@@ -18,7 +15,7 @@ class Settings {
 	
 	public var paddleSpeed:Float;
 	public var ballSpeed:Float;
-	public var maxDeflectedAngle:Int = 45;
+	public var maxDeflectedAngle:Int = 60;
 	public var scoreToWin:Int = 3;
 	
 	var unitLength:Int = 16;
@@ -38,12 +35,19 @@ class Settings {
 	public var scoreboardFieldWidth(default, null):Float;
 	
 	public function new() {
+		setupAutoPause();
 		hideMouseOnMobileWeb();
 		setPlayField();
 		calculateScale();
 		scalePlayField();
 		calculateSpaces();
 		scaleStuff();
+	}
+
+	function setupAutoPause() {
+		#if debug
+		FlxG.autoPause = false;
+		#end
 	}
 	
 	function hideMouseOnMobileWeb() {
