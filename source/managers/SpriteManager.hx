@@ -16,7 +16,8 @@ class SpriteManager {
 	 */
 	public function createSprite(x:Float = 0, y:Float = 0, ?group:FlxSpriteGroup):FlxSprite {
 		var sprite = _pool.recycle(FlxSprite);
-		sprite.setPosition(x, y);
+		sprite.reset(x, y);
+		sprite.solid = true;
 		if (group != null)
 			group.add(sprite);
 		return sprite;
