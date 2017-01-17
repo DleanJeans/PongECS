@@ -9,8 +9,6 @@ import systems.*;
 import ui.*;
 
 class Game extends FlxGroup {
-	public var engine(default, null):Engine;
-	
 	public var teamUpper(get, null):Entity; function get_teamUpper() return teamManager.teamUpper;
 	public var teamLower(get, null):Entity; function get_teamLower() return teamManager.teamLower;
 	
@@ -35,6 +33,8 @@ class Game extends FlxGroup {
 	public var physics(default, null):Phase;
 	
 	public var inMenu:Bool = true;
+	
+	var _engine(default, null):Engine;
 	
 	var _spriteManager(default, null):SpriteManager;
 	var _entityTracker(default, null):EntityTracker;
@@ -131,7 +131,7 @@ class Game extends FlxGroup {
 	}
 	
 	function setupEngine() {
-		engine = new Engine();
+		_engine = new Engine();
 	}
 	
 	function setupBackground() {
@@ -164,8 +164,8 @@ class Game extends FlxGroup {
 	}
 	
 	function setupPhases() {
-		postUpdate = engine.createPhase();
-		physics = engine.createPhase();
+		postUpdate = _engine.createPhase();
+		physics = _engine.createPhase();
 		
 		ballSpawner = new BallSpawner(ballManager);
 		
@@ -222,7 +222,7 @@ class Game extends FlxGroup {
 	}
 	
 	public function createEntity(?components:Array<{}>):Entity {
-		var entity = engine.create(components);
+		var entity = _engine.create(components);
 		if (components == null)
 			return entity;
 		

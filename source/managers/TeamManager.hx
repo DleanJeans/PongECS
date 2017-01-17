@@ -22,7 +22,7 @@ class TeamManager {
 	}
 	
 	function createTeam(position:Int):Entity {
-		return G.game.engine.create([new Direction(position), new Score()]);
+		return G.game.createEntity([new Direction(position), new Score()]);
 	}
 	
 	public function resetScore() {
