@@ -169,6 +169,8 @@ class Game extends FlxGroup {
 		
 		ballSpawner = new BallSpawner(ballManager);
 		
+		postUpdate.add(new AutoDestroyer());
+		
 		postUpdate.add(new AutoFramerate());
 		if (FlxG.onMobile)
 			postUpdate.add(new TouchController());
@@ -177,6 +179,9 @@ class Game extends FlxGroup {
 		postUpdate.add(new AIController());
 		postUpdate.add(new PaddleMovement());
 		postUpdate.add(ballSpawner);
+		
+		postUpdate.add(new EntityDestroyer());
+		
 		physics.add(new PaddleBounder());
 		physics.add(new Collision());
 	}

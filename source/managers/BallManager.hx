@@ -1,5 +1,6 @@
 package managers;
 
+import components.DestroyThis;
 import edge.Entity;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
@@ -12,19 +13,20 @@ class BallManager {
 		balls = G.game.balls;
 	}
 	
-	public function reset() {
+	public function clear() {
 		for (ball in balls) {
 			var entity = G.game.getEntity(ball);
-			entity.destroy();
-			killBall(ball);
+			entity.add(new DestroyThis());
 		}
 	}
 	
 	public function createBall(?velocity:FlxPoint):Entity {
 		var sprite = G.game.createSprite(0, 0, balls);
+		
 		sprite.makeGraphic(G.settings.unit(), G.settings.unit());
 		sprite.setCenter(G.settings.playField.getCenter());
 		sprite.elasticity = 1;
+		
 		if (velocity != null) {
 			sprite.velocity.copyFrom(velocity);
 			velocity.putWeak();
