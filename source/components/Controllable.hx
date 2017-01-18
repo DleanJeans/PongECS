@@ -2,7 +2,7 @@ package components;
 
 import edge.IComponent;
 
-class Controlled implements IComponent {
+class Controllable implements IComponent {
 	/**
 	 * -1 == LEFT
 	 * 0 == NOT MOVING

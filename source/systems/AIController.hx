@@ -1,13 +1,13 @@
 package systems;
 
-import components.AIControlled;
+import components.AIControllable;
 import edge.ISystem;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
 
 class AIController implements ISystem {
 
-	public function update(sprite:FlxSprite, ai:AIControlled) {
+	public function update(sprite:FlxSprite, ai:AIControllable) {
 		var paddle = sprite.getCenterX();
 		ai.target = ai.ballCenterX;
 		if (!ai.ballComing)

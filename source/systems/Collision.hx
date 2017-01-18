@@ -11,7 +11,7 @@ class Collision implements ISystem {
 	private var _balls:FlxSpriteGroup;
 	private var _paddles:FlxSpriteGroup;
 	private var _walls:FlxSpriteGroup;
-		
+	
 	public function new() {
 		_signals = G.game.signals;
 		_balls = G.game.balls;

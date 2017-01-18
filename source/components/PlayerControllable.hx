@@ -1,6 +1,6 @@
 package components;
 
-class PlayerControlled extends Controlled {
+class PlayerControllable extends Controllable {
 	public function new() {
 		super();
 	}

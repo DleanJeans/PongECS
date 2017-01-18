@@ -1,7 +1,7 @@
 package systems;
 
 import components.Direction;
-import components.PlayerControlled;
+import components.PlayerControllable;
 import edge.Entity;
 import edge.ISystem;
 import flixel.FlxG;
@@ -9,7 +9,7 @@ import flixel.FlxSprite;
 import flixel.math.FlxMath;
 
 class TouchController implements ISystem {
-	public function update(paddle:FlxSprite, player:PlayerControlled, team:Entity) {
+	public function update(paddle:FlxSprite, player:PlayerControllable, team:Entity) {
 		#if !FLX_NO_TOUCH
 		if (FlxG.touches.list.length == 0) {
 			player.movingDirection = 0;

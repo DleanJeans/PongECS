@@ -17,31 +17,31 @@ class PaddleManager {
 	}
 	
 	public function switchBothToPlayers() {
-		switchControl(p1, new PlayerControlled());
-		switchControl(p2, new PlayerControlled());
+		switchControl(p1, new PlayerControllable());
+		switchControl(p2, new PlayerControllable());
 	}
 	
 	public function switchBothToAI() {
-		switchControl(p1, new AIControlled());
-		switchControl(p2, new AIControlled());
+		switchControl(p1, new AIControllable());
+		switchControl(p2, new AIControllable());
 	}
 	
 	public function switchP1ToPlayer() {
-		switchControl(p1, new PlayerControlled());
+		switchControl(p1, new PlayerControllable());
 	}
 	
 	public function switchP1Control() { 
-		if (p1.existsExactType(AIControlled))
+		if (p1.existsExactType(AIControllable))
 			switchP1ToPlayer();
-		else switchControl(p1, new AIControlled());
+		else switchControl(p1, new AIControllable());
 	}
 	
-	function switchControl(p:Entity, newControl:Controlled) {
-		// if p already has the same type Controlled
+	function switchControl(p:Entity, newControl:Controllable) {
+		// if p already has the same type of Controllable
 		if (p.existsExactType(cast Type.getClass(newControl)))
 			return;
 		
-		p.removeType(Controlled);
+		p.removeType(Controllable);
 		p.add(newControl);
 	}
 	
@@ -54,8 +54,8 @@ class PaddleManager {
 		p1 = createPaddle(G.settings.playField.bottom - G.settings.unit(4), FlxObject.UP);
 		p2 = createPaddle(G.settings.playField.y + G.settings.unit(3), FlxObject.DOWN);
 		
-		p1.addMany([G.game.teamLower, new AIControlled()]);
-		p2.addMany([G.game.teamUpper, new AIControlled()]);
+		p1.addMany([G.game.teamLower, new AIControllable()]);
+		p2.addMany([G.game.teamUpper, new AIControllable()]);
 	}
 	
 	function createPaddle(y:Float = 0, facing:Int) {

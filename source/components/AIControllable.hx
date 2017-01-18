@@ -2,7 +2,7 @@ package components;
 
 import edge.IComponent;
 
-class AIControlled extends Controlled {
+class AIControllable extends Controllable {
 	public var ballCenterX:Float;
 	public var ballComing:Bool = false;
 	public var target:Float;

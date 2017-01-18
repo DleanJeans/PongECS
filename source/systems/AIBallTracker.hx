@@ -1,6 +1,6 @@
 package systems;
 
-import components.AIControlled;
+import components.AIControllable;
 import edge.ISystem;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
@@ -10,7 +10,7 @@ class AIBallTracker implements ISystem {
 	
 	public function new() {}
 	
-	public function update(sprite:FlxSprite, ai:AIControlled) {
+	public function update(sprite:FlxSprite, ai:AIControllable) {
 		if (ball == null) {
 			ai.ballComing = false;
 			return;

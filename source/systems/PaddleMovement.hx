@@ -1,12 +1,12 @@
 package systems;
 
-import components.Controlled;
+import components.Controllable;
 import edge.ISystem;
 import flixel.FlxSprite;
 
 class PaddleMovement implements ISystem {
-	public function update(sprite:FlxSprite, controlled:Controlled) {
-		sprite.velocity.x = controlled.movingDirection * controlled.speed;
+	public function update(sprite:FlxSprite, controllable:Controllable) {
+		sprite.velocity.x = controllable.movingDirection * controllable.speed;
 	}
 	
 }

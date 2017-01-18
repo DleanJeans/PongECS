@@ -1,11 +1,11 @@
 package systems;
 
-import components.Controlled;
+import components.Controllable;
 import edge.ISystem;
 import flixel.FlxSprite;
 
 class PaddleBounder implements ISystem {
-	function update(sprite:FlxSprite, controlled:Controlled) {
+	function update(sprite:FlxSprite, controllable:Controllable) {
 		var pf = G.settings.playField;
 		
 		var leftWallRight = G.game.wallManager.left.get(FlxSprite).getRight();
