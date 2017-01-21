@@ -12,7 +12,7 @@ class SpriteManager {
 	}
 	
 	/**
-	 * Create a new FlxSprite and add it to the optional `group`.
+	 * Create a new FlxSprite and optionally add it to the `group` if given.
 	 */
 	public function createSprite(x:Float = 0, y:Float = 0, ?group:FlxSpriteGroup):FlxSprite {
 		var sprite = _pool.recycle(FlxSprite);

@@ -26,8 +26,10 @@ class Game extends FlxGroup {
 	public var teamManager(default, null):TeamManager;
 	public var ballManager(default, null):BallManager;
 	public var ballSpawner(default, null):BallSpawner;
+	
 	public var winCheck(default, null):WinCheck;
 	public var restarter(default, null):Restarter;
+	public var winHandler(default, null):WinHandler;
 	
 	public var postUpdate(default, null):Phase;
 	public var physics(default, null):Phase;
@@ -106,7 +108,7 @@ class Game extends FlxGroup {
 	public function reset() {
 		teamManager.resetScore();
 		paddleManager.centerPaddles();
-		ballManager.reset();
+		ballManager.clear();
 	}
 	
 	public function start() {
@@ -156,7 +158,9 @@ class Game extends FlxGroup {
 		wallManager = new WallManager();
 		teamManager = new TeamManager();
 		ballManager = new BallManager();
+		
 		winCheck = new WinCheck();
+		winHandler = new WinHandler();
 		restarter = new Restarter();
 		
 		_spriteManager = new SpriteManager();
@@ -167,37 +171,37 @@ class Game extends FlxGroup {
 		postUpdate = _engine.createPhase();
 		physics = _engine.createPhase();
 		
-		ballSpawner = new BallSpawner(ballManager);
-		
 		postUpdate.add(new AutoDestroyer());
 		
 		postUpdate.add(new AutoFramerate());
-		if (FlxG.onMobile)
-			postUpdate.add(new TouchController());
-		else postUpdate.add(new KeyboardController());
+		
+		postUpdate.add(newPlayerController());
 		postUpdate.add(new AIBallTracker());
 		postUpdate.add(new AIController());
 		postUpdate.add(new PaddleMovement());
-		postUpdate.add(ballSpawner);
+		postUpdate.add(ballSpawner = new BallSpawner(ballManager));
+		
+		postUpdate.add(new GoalHandler());
 		
 		postUpdate.add(new EntityDestroyer());
+		postUpdate.add(new BallCollisionRemover());
 		
 		physics.add(new PaddleBounder());
 		physics.add(new Collision());
 	}
 	
+	function newPlayerController() {
+		return
+		if (FlxG.onMobile)
+			new TouchController()
+		else new KeyboardController();
+	}
+	
 	function setupSignals() {
 		var s = signals;
 		
-		s.goal.add(goalManager.addScore);
-		s.goal_0.add(winCheck.check);
-		s.goal_ball.add(ballSpawner.spawnAtScorer);
-		s.goal_ball.add(ballManager.killBall);
-		
-		s.ball_wall.add(goalManager.detectGoal);
-		
-		s.won_0.add(pause);
-		s.won_0.add(restarter.restart);
+		s.ball_wall.add(goalManager.addBallCollision);
+		s.won.add(winHandler.handle);
 	}
 	
 	override public function update(elapsed:Float):Void {
@@ -208,10 +212,10 @@ class Game extends FlxGroup {
 	
 	/**
 	 * Create a new FlxSprite and add it to `group` or `container`.
-	 * @param	x Initial x position.
-	 * @param	y Initial y position.
-	 * @param	group Optional FlxSpriteGroup to add to. If not passed, the sprite will be added to `container`.
-	 * @return A FlxSprite.
+	 * @param	x 		Initial x position.
+	 * @param	y 		Initial y position.
+	 * @param	group 	Optional FlxSpriteGroup to add to. If not passed, the sprite will be added to `container`.
+	 * @return 	A FlxSprite
 	 */
 	public function createSprite(x:Float = 0, y:Float = 0, ?group:FlxSpriteGroup):FlxSprite {
 		return _spriteManager.createSprite(x, y, group);
@@ -221,6 +225,10 @@ class Game extends FlxGroup {
 		return _entityTracker.get(sprite);
 	}
 	
+	/**
+	 * Create a new Entity and track its FlxSprite if it has one
+	 * @return	A new Entity
+	 */
 	public function createEntity(?components:Array<{}>):Entity {
 		var entity = _engine.create(components);
 		if (components == null)
@@ -233,11 +241,11 @@ class Game extends FlxGroup {
 		return entity;
 	}
 	
-	public function pause() {
+	public inline function pause() {
 		active = false;
 	}
 	
-	public function resume() {
+	public inline function resume() {
 		active = true;
 	}
 	

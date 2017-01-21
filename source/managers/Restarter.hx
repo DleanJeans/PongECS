@@ -1,4 +1,5 @@
 package managers;
+
 import flixel.util.FlxTimer;
 
 class Restarter {

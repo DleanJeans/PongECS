@@ -24,14 +24,9 @@ class Collision implements ISystem {
 	}
 	
 	public function update() {
-		if (FlxG.overlap(_balls, _balls, _signals.ball_ball.dispatch))
-			_signals.ball_ball_0.dispatch();
-		
-		if (FlxG.overlap(_balls, _walls, _signals.ball_wall.dispatch))
-			_signals.ball_wall_0.dispatch();
-		
-		if (FlxG.overlap(_balls, _paddles, _signals.ball_paddle.dispatch))
-			_signals.ball_paddle_0.dispatch();
+		FlxG.overlap(_balls, _balls, _signals.ball_ball.dispatch);
+		FlxG.overlap(_balls, _walls, _signals.ball_wall.dispatch);
+		FlxG.overlap(_balls, _paddles, _signals.ball_paddle.dispatch);
 	}
 	
 	public function seperate(sprite1:FlxSprite, sprite2:FlxSprite) {

@@ -17,10 +17,8 @@ class WinCheck {
 	
 	public function check() {
 		var winner = getWinner();
-		if (winner != null) {
+		if (winner != null)
 			G.game.signals.won.dispatch(winner);
-			G.game.signals.won_0.dispatch();
-		}
 	}
 	
 	public function getWinner():Entity {
