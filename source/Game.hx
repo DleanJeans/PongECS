@@ -3,6 +3,7 @@ package;
 import components.*;
 import edge.*;
 import flixel.*;
+import events.types.*;
 import flixel.group.*;
 import managers.*;
 import systems.*;
@@ -17,8 +18,6 @@ class Game extends FlxGroup {
 	public var balls(default, null):FlxSpriteGroup;
 	
 	public var background(default, null):Background;
-	
-	public var signals(default, null):GameSignals;
 	
 	public var wallManager(default, null):WallManager;
 	public var goalManager(default, null):GoalManager;
@@ -47,6 +46,9 @@ class Game extends FlxGroup {
 		super();
 	}
 	
+	/**
+	 * Create game entities like paddles and walls
+	 */
 	public function create() {
 		paddleManager.createPaddles();
 		wallManager.createWalls();
@@ -66,19 +68,19 @@ class Game extends FlxGroup {
 	
 	function startMenuDemoMode() {
 		paddleManager.switchBothToAI();
-		signals.menuDemoMode.dispatch();
 		tryDisableSplitScreen();
+		G.events.queueEvent(new EventData_ScreenMode_Menu());
 	}
 	
 	function startOnePlayerMode() {
 		paddleManager.switchP1ToPlayer();
-		signals.onePlayerMode.dispatch();
+		G.events.queueEvent(new EventData_ScreenMode_OnePlayer());
 	}
 	
 	function startTwoPlayerMode() {
 		paddleManager.switchBothToPlayers();
-		signals.twoPlayerMode.dispatch();
 		tryEnableSplitScreen();
+		G.events.queueEvent(new EventData_ScreenMode_TwoPlayer());
 	}
 	
 	function tryEnableSplitScreen() {
@@ -87,7 +89,7 @@ class Game extends FlxGroup {
 		
 		G.settings.splitScreen = true;
 		G.cameras.tryEnableSplitScreen();
-		signals.splitScreen.dispatch();
+		G.events.queueEvent(new EventData_SplitScreen_On());
 	}
 	
 	function tryDisableSplitScreen() {
@@ -96,7 +98,7 @@ class Game extends FlxGroup {
 		
 		G.settings.splitScreen = false;
 		G.cameras.tryDisableSplitScreen();
-		signals.splitScreenOff.dispatch();
+		G.events.queueEvent(new EventData_SplitScreen_Off());
 	}
 	
 	public function restart() {
@@ -129,7 +131,7 @@ class Game extends FlxGroup {
 		setupSpriteGroups();
 		setupManagers();
 		setupPhases();
-		setupSignals();
+		setupEventListeners();
 	}
 	
 	function setupEngine() {
@@ -152,7 +154,6 @@ class Game extends FlxGroup {
 	}
 	
 	function setupManagers() {
-		signals = new GameSignals();
 		paddleManager = new PaddleManager();
 		goalManager = new GoalManager();
 		wallManager = new WallManager();
@@ -197,11 +198,9 @@ class Game extends FlxGroup {
 		else new KeyboardController();
 	}
 	
-	function setupSignals() {
-		var s = signals;
-		
-		s.ball_wall.add(goalManager.addBallCollision);
-		s.won.add(winHandler.handle);
+	function setupEventListeners() {
+		G.events.addListener1(cast goalManager.addBallCollision, EventData_Collision_BallWall.EVENT_TYPE);
+		G.events.addListener0(cast winHandler.handle, EventData_Win.EVENT_TYPE);
 	}
 	
 	override public function update(elapsed:Float):Void {

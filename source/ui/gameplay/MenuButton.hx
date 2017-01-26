@@ -1,5 +1,7 @@
 package ui.gameplay;
 
+import events.types.EventData_SplitScreen_Off;
+import events.types.EventData_SplitScreen_On;
 import flixel.FlxG;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
@@ -16,9 +18,8 @@ class MenuButton extends Button {
 			rotateLabel();
 		UI.hide(this);
 		
-		var s = G.game.signals;
-		s.splitScreen.add(enableSplitScreenPosition);
-		s.splitScreenOff.add(disableSplitScreenPosition);
+		G.events.addListener0(enableSplitScreenPosition, EventData_SplitScreen_On.EVENT_TYPE);
+		G.events.addListener0(disableSplitScreenPosition, EventData_SplitScreen_Off.EVENT_TYPE);
 	}
 	
 	function backToMenu() {

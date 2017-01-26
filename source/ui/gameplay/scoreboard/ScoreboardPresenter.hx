@@ -1,4 +1,6 @@
 package ui.gameplay.scoreboard;
+import components.Score;
+import events.types.EventData_ScoreChanged;
 import flixel.text.FlxText;
 
 class ScoreboardPresenter {
@@ -15,11 +17,19 @@ class ScoreboardPresenter {
 		_upper = _p2 = view.upperScore;
 	}
 	
-	public function updateLower(score:Int) {
+	public function updateScore(e:EventData_ScoreChanged) {
+		var upperScoreChanged = e.scoreComponent == G.game.teamUpper.get(Score);
+		
+		if (upperScoreChanged)
+			updateUpper(e.newScore);
+		else updateLower(e.newScore);
+	}
+	
+	function updateLower(score:Int) {
 		_p1.text = Std.string(score);
 	}
 	
-	public function updateUpper(score:Int) {
+	function updateUpper(score:Int) {
 		_p2.text = Std.string(score);
 	}
 	

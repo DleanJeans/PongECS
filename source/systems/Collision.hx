@@ -1,40 +1,58 @@
 package systems;
 
 import edge.*;
+import events.types.*;
 import flixel.*;
 import flixel.group.*;
 import flixel.math.*;
 import managers.*;
 
 class Collision implements ISystem {
-	private var _signals:GameSignals;
 	private var _balls:FlxSpriteGroup;
 	private var _paddles:FlxSpriteGroup;
 	private var _walls:FlxSpriteGroup;
 	
 	public function new() {
-		_signals = G.game.signals;
 		_balls = G.game.balls;
 		_paddles = G.game.paddles;
 		_walls = G.game.walls;
 		
-		_signals.ball_ball.add(seperate);
-		_signals.ball_wall.add(seperate);
-		_signals.ball_paddle.add(ball_paddle);
+		G.events.addListener1(cast separate_BallBall, EventData_Collision_BallBall.EVENT_TYPE);
+		G.events.addListener1(cast separate_BallWall, EventData_Collision_BallWall.EVENT_TYPE);
+		G.events.addListener1(cast separate_BallPaddle, EventData_Collision_BallPaddle.EVENT_TYPE);
 	}
 	
 	public function update() {
-		FlxG.overlap(_balls, _balls, _signals.ball_ball.dispatch);
-		FlxG.overlap(_balls, _walls, _signals.ball_wall.dispatch);
-		FlxG.overlap(_balls, _paddles, _signals.ball_paddle.dispatch);
+		FlxG.overlap(_balls, _balls, handleCollision_BallBall);
+		FlxG.overlap(_balls, _walls, handleCollision_BallWall);
+		FlxG.overlap(_balls, _paddles, handleCollision_BallPaddle);
 	}
 	
-	public function seperate(sprite1:FlxSprite, sprite2:FlxSprite) {
-		FlxObject.separate(sprite1, sprite2);
+	function handleCollision_BallBall(ball:FlxSprite, ball:FlxSprite) {
+		G.events.queueEvent(new EventData_Collision_BallBall(ball, ball));
 	}
 	
-	function ball_paddle(ball:FlxSprite, paddle:FlxSprite) {
-		FlxObject.separate(paddle, ball);
+	function handleCollision_BallWall(ball:FlxSprite, wall:FlxSprite) {
+		G.events.queueEvent(new EventData_Collision_BallWall(ball, wall));
+	}
+	
+	function handleCollision_BallPaddle(ball:FlxSprite, paddle:FlxSprite) {
+		G.events.queueEvent(new EventData_Collision_BallPaddle(ball, paddle));
+	}
+	
+	function separate_BallBall(e:EventData_Collision_BallBall) {
+		FlxObject.separate(e.ball1, e.ball2);
+	}
+	
+	function separate_BallWall(e:EventData_Collision_BallWall) {
+		FlxObject.separate(e.ball, e.wall);
+	}
+	
+	function separate_BallPaddle(e:EventData_Collision_BallPaddle) {
+		var ball = e.ball;
+		var paddle = e.paddle;
+		
+		FlxObject.separate(ball, paddle);
 		
 		var stop = false;
 		var ballCenterY = ball.getCenterY();

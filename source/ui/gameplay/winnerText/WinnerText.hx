@@ -1,8 +1,7 @@
 package ui.gameplay.winnerText;
 
 import components.Direction;
-import edge.Entity;
-import flixel.FlxG;
+import events.types.EventData_Win;
 import flixel.text.FlxText;
 
 class WinnerText extends FlxText {
@@ -15,12 +14,12 @@ class WinnerText extends FlxText {
 		
 		presenter = new WinnerTextPresenter(this);
 		
-		G.game.signals.won.add(updateView);
+		G.events.addListener1(cast updateView, EventData_Win.EVENT_TYPE);
 	}
 	
-	private function updateView(team:Entity) {
+	function updateView(e:EventData_Win) {
 		if (G.game.inMenu) return;
-		presenter.showAt(team.get(Direction).direction);
+		presenter.showAt(e.winnerTeam.get(Direction).direction);
 	}
 	
 }

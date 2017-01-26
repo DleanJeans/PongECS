@@ -2,6 +2,7 @@ package ui.gameplay.scoreboard;
 
 import components.Score;
 import flixel.group.FlxGroup;
+import events.types.*;
 
 class Scoreboard extends FlxGroup {
 	public var view(default, null):ScoreboardView;
@@ -21,15 +22,13 @@ class Scoreboard extends FlxGroup {
 		
 		add(view);
 		
-		_upper.changed.add(presenter.updateUpper);
-		_lower.changed.add(presenter.updateLower);
+		G.events.addListener1(cast presenter.updateScore, EventData_ScoreChanged.EVENT_TYPE);
 		
-		var s = G.game.signals;
-		s.menuDemoMode.add(presenter.enableOnePlayerMode);
-		s.onePlayerMode.add(presenter.enableOnePlayerMode);
-		s.twoPlayerMode.add(presenter.enableTwoPlayerMode);
-		s.splitScreen.add(presenter.enableSplitScreenMode);
-		s.splitScreenOff.add(presenter.disableSplitScreenMode);
+		G.events.addListener0(presenter.enableOnePlayerMode, EventData_ScreenMode_Menu.EVENT_TYPE);
+		G.events.addListener0(presenter.enableOnePlayerMode, EventData_ScreenMode_OnePlayer.EVENT_TYPE);
+		G.events.addListener0(presenter.enableTwoPlayerMode, EventData_ScreenMode_TwoPlayer.EVENT_TYPE);
+		G.events.addListener0(presenter.enableSplitScreenMode, EventData_SplitScreen_On.EVENT_TYPE);
+		G.events.addListener0(presenter.disableSplitScreenMode, EventData_SplitScreen_Off.EVENT_TYPE);
 	}
 	
 }

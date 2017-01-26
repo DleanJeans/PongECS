@@ -1,11 +1,10 @@
 package components;
 
 import edge.IComponent;
-import managers.GameSignals.Signal1;
+import events.types.EventData_ScoreChanged;
 
 class Score implements IComponent {
 	public var score(default, set):Int = 0;
-	public var changed(default, null):Signal1<Int> = new Signal1<Int>();
 	
 	public function new() {}
 	
@@ -22,7 +21,7 @@ class Score implements IComponent {
 	}
 	
 	function set_score(newScore:Int):Int {
-		changed.dispatch(newScore);
+		G.events.queueEvent(new EventData_ScoreChanged(this));
 		return score = newScore;
 	}
 	

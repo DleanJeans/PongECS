@@ -2,6 +2,7 @@ package managers;
 
 import components.Score;
 import edge.Entity;
+import events.types.EventData_Win;
 
 class WinCheck {
 	var _teamUpper:Entity = G.game.teamUpper;
@@ -18,7 +19,7 @@ class WinCheck {
 	public function check() {
 		var winner = getWinner();
 		if (winner != null)
-			G.game.signals.won.dispatch(winner);
+			G.events.queueEvent(new EventData_Win(winner));
 	}
 	
 	public function getWinner():Entity {
