@@ -35,6 +35,7 @@ class Settings {
 	public var scoreboardFieldWidth(default, null):Float;
 	
 	public function new() {
+		addToFlixelConsole();
 		setupAutoPause();
 		hideMouseOnMobileWeb();
 		setPlayField();
@@ -42,6 +43,10 @@ class Settings {
 		scalePlayField();
 		calculateSpaces();
 		scaleStuff();
+	}
+	
+	function addToFlixelConsole() {
+		FlxG.console.registerObject("s", this);
 	}
 
 	function setupAutoPause() {
