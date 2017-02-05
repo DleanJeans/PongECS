@@ -3,18 +3,17 @@ package events;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.util.FlxArrayUtil;
-import haxe.ds.Either;
 
 typedef EventListener0 = Void->Void;
-typedef EventListener1 = EventData->Void;
+typedef EventListener1 = BaseEventData->Void;
 
 typedef EventListenerList0 = Array<EventListener0>;
 typedef EventListenerList1 = Array<EventListener1>;
 
-typedef EventListenerMap0 = Map<Int, EventListenerList0>;
-typedef EventListenerMap1 = Map<Int, EventListenerList1>;
+typedef EventListenerMap0 = Map<EventType, EventListenerList0>;
+typedef EventListenerMap1 = Map<EventType, EventListenerList1>;
 
-typedef EventQueue = Array<Array<EventData>>;
+typedef EventQueue = Array<Array<BaseEventData>>;
 
 class EventManager extends FlxBasic {
 	public static var NUM_QUEUES = 2;
@@ -72,11 +71,11 @@ class EventManager extends FlxBasic {
 		return listenerList.remove(listener);
 	}
 	
-	public function triggerEvent(eventData:EventData) {
+	public function triggerEvent(eventData:BaseEventData) {
 		callListeners(eventData);
 	}
 	
-	function callListeners(eventData:EventData) {
+	function callListeners(eventData:BaseEventData) {
 		var listenerList0 = _listenerMap0[eventData.getEventType()];
 		var listenerList1 = _listenerMap1[eventData.getEventType()];
 		
@@ -91,7 +90,7 @@ class EventManager extends FlxBasic {
 		}
 	}
 	
-	public function queueEvent(eventData:EventData):Bool {
+	public function queueEvent(eventData:BaseEventData):Bool {
 		var listenerList0 = _listenerMap0[eventData.getEventType()];
 		var listenerList1 = _listenerMap1[eventData.getEventType()];
 		
