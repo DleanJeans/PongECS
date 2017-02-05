@@ -5,6 +5,8 @@ import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 
+using Position;
+
 class Title extends FlxSpriteGroup {
 	public var name(default, null):FlxText;
 	public var sub(default, null):FlxText;

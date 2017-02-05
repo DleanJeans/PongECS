@@ -4,6 +4,8 @@ import components.Controllable;
 import edge.ISystem;
 import flixel.FlxSprite;
 
+using Position;
+
 class PaddleBounder implements ISystem {
 	function update(sprite:FlxSprite, controllable:Controllable) {
 		var pf = G.settings.playField;

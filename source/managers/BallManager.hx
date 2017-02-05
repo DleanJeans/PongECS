@@ -6,6 +6,9 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxPoint;
 
+using DPosition;
+using Position;
+
 class BallManager {
 	public var balls(default, null):FlxSpriteGroup;
 	

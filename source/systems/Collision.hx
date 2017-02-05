@@ -7,6 +7,8 @@ import flixel.group.*;
 import flixel.math.*;
 import managers.*;
 
+using Position;
+
 class Collision implements ISystem {
 	private var _balls:FlxSpriteGroup;
 	private var _paddles:FlxSpriteGroup;

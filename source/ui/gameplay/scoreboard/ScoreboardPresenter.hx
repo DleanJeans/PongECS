@@ -1,7 +1,10 @@
 package ui.gameplay.scoreboard;
+
 import components.Score;
 import events.types.EventData_ScoreChanged;
 import flixel.text.FlxText;
+
+using Position;
 
 class ScoreboardPresenter {
 	public var view(default, null):ScoreboardView;

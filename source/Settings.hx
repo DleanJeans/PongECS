@@ -3,6 +3,8 @@ package;
 import flixel.FlxG;
 import flixel.math.FlxRect;
 
+using DPosition;
+
 class Settings {
 	var _scale(default, null):Float = 1;
 	public function scale(value:Float):Int

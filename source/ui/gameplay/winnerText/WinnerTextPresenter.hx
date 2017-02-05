@@ -4,6 +4,8 @@ import components.Direction;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 
+using Position;
+
 class WinnerTextPresenter {
 	public var upperHalfScreenCenter = FlxPoint.get(FlxG.width * 0.5, FlxG.height * 0.25);
 	public var lowerHalfScreenCenter = FlxPoint.get(FlxG.width * 0.5, FlxG.height * 0.75);

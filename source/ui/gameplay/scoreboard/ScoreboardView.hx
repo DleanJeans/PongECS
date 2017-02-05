@@ -4,6 +4,8 @@ import flixel.FlxG;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 
+using Position;
+
 class ScoreboardView extends FlxSpriteGroup {
 	public var upperScore(default, null):FlxText;
 	public var lowerScore(default, null):FlxText;

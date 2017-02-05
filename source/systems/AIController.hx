@@ -5,6 +5,9 @@ import edge.ISystem;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
 
+using DPosition;
+using Position;
+
 class AIController implements ISystem {
 
 	public function update(sprite:FlxSprite, ai:AIControllable) {

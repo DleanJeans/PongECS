@@ -4,6 +4,8 @@ import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 
+using Position;
+
 class Instruction extends FlxText {
 	public function new() {
 		var text = 'Score ${G.settings.scoreToWin} points to win\n';

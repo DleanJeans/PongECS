@@ -2,6 +2,8 @@ package ui;
 
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 
+using Position;
+
 class ButtonMenu extends FlxTypedSpriteGroup<Button> {
 	var _lastButton:Button;
 	

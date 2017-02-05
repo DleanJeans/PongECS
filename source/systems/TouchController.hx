@@ -8,6 +8,8 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
 
+using Position;
+
 class TouchController implements ISystem {
 	public function update(paddle:FlxSprite, player:PlayerControllable, team:Entity) {
 		#if !FLX_NO_TOUCH

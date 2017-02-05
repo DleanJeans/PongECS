@@ -5,6 +5,8 @@ import edge.ISystem;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
 
+using Position;
+
 class AIBallTracker implements ISystem {
 	var ball(get, null):FlxSprite; function get_ball() return G.game.balls.members[0];
 	
